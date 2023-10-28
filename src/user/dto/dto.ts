@@ -39,5 +39,6 @@ export class UserToFrontDto {
    id: number
    email: string
    username: string
+   access_token: string
 
 }

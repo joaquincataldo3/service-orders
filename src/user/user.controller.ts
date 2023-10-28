@@ -29,7 +29,6 @@ export class UserController {
     // la ventaja de esto es que si cambiamos la libreria, esto siempre va apertenecer a nestjs
     // lo hacemos en un dto que es una convención: data transfer object
     signUp (@Body() dto: UserSignUpDto) {
-
         return this.userService.signUp(dto);
     }
 
