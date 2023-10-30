@@ -1,14 +1,7 @@
-import { Controller, Get } from "@nestjs/common";
-import { OrderStatusesService } from "./order_statuses.service";
+import { Controller }from "@nestjs/common";
 
 @Controller('order-statuses')
 
 export class OrderStatusesController {
 
-    constructor (private orderStatusesService: OrderStatusesService) {}
-
-    @Get('all')
-    allStatuses() {
-        return this.orderStatusesService.allStatuses(  )
-    }
 }

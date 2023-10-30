@@ -2,43 +2,43 @@
 // tenemos que hacerlo con clase
 
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import express from 'express';
 
 // asi podemos validar los datos
 export class UserSignUpDto {
-    
+
    // validamos de esta maenra
    @IsNotEmpty()
    @IsEmail()
    email: string
 
    @IsNotEmpty()
-   @IsString( )
+   @IsString()
    password: string
 
    @IsNotEmpty()
-   @IsString( )
+   @IsString()
    username: string
 
 }
 
 export class UserLoginDto {
-    
-   // validamos de esta maenra
+
+   // validamos de esta maenras
    @IsNotEmpty()
    @IsEmail()
    email: string
 
    @IsNotEmpty()
-   @IsString( )
+   @IsString()
    password: string
 
 }
 
-export class UserToFrontDto {
-
+export interface UserToFrontDto {
    id: number
    email: string
    username: string
    access_token: string
-
 }
+

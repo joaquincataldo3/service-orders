@@ -2,7 +2,7 @@ import { AllowNull, AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasM
 import { OrderModel } from "src/order/order.model";
 import { UserModel } from "src/user/user.model";
 
-@Table({tableName: 'comments'})
+@Table({tableName: 'comments', timestamps: true, deletedAt: false, updatedAt: false})
 export class CommentModel extends Model {
 
     @AutoIncrement
@@ -16,7 +16,7 @@ export class CommentModel extends Model {
 
     @AllowNull(false)
     @Column({defaultValue: Date.now()})
-    created_at: Date
+    createdAt: Date
 
     @ForeignKey(() => UserModel)
     @Column({type: DataType.INTEGER})

@@ -1,7 +1,7 @@
 import { AllowNull, AutoIncrement, Column, DataType, HasMany, PrimaryKey, Table, Model} from "sequelize-typescript";
 import { OrderModel } from "src/order/order.model";
 
-@Table
+@Table({tableName: 'order_statuses', timestamps: false})
 export class OrderStatusesModel extends Model {
 
     @PrimaryKey

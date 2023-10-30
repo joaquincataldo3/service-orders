@@ -8,6 +8,7 @@ import { WorkDoneModule } from './work_done/work_done.module';
 import { OrderStatusModule } from './order_statuses/order_statuses.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { databaseConfig } from './sequelize/database.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { databaseConfig } from './sequelize/database.config';
     CommentModule,
     WorkDoneModule,
     OrderStatusModule,
+    AuthModule,
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
