@@ -21,7 +21,7 @@ import { WorkDoneModule } from "src/work_done/work_done.module";
     imports: 
     [SequelizeModule.forFeature([OrderModel, UserModel, ClientModel, CommentModel, OrderStatusesModel, WorkDoneModel]),
      UserModule, ClientModule, forwardRef(() => CommentModule), OrderStatusModule, WorkDoneModule],
-    exports: [SequelizeModule]
+    exports: [SequelizeModule, OrderService]
 })
 
 export class OrderModule {}
