@@ -13,6 +13,9 @@ export class WorkDoneModel extends Model {
     @Column({type: DataType.TEXT})
     description: string
 
+    @AllowNull(false)
+    @Column({type: DataType.TINYINT})
+    edited: number
 
     @ForeignKey(() => OrderModel)
     @Column({type: DataType.INTEGER})

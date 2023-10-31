@@ -1,13 +1,11 @@
 import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { OrderModel } from "./order.model";
-import { ChangeOrderStatusDto, CreateOrderDto, CreateWorkDoneDto, createCommentDto } from "./dto/dto";
+import { ChangeOrderStatusDto, CreateOrderDto} from "./dto/dto";
 import { UserModel } from "src/user/user.model";
 import { ClientModel } from "src/client/client.model";
 import { CommentModel } from "src/comments/comment.model";
-import {Request} from 'express';
 import { OrderStatusesModel } from "src/order_statuses/order_statuses.model";
-import { WorkDoneModel } from "src/work_done/work_done.model";
 
 Injectable({})
 
@@ -18,13 +16,22 @@ export class OrderService {
     @InjectModel(UserModel) private userModel: typeof UserModel,
     @InjectModel(ClientModel) private clientModel: typeof ClientModel,
     @InjectModel(CommentModel) private commentModel: typeof CommentModel,
-    @InjectModel(OrderStatusesModel) private orderStatusesModel: typeof OrderStatusesModel,
-    @InjectModel(WorkDoneModel) private workDoneModel: typeof WorkDoneModel) { }
+    @InjectModel(OrderStatusesModel) private orderStatusesModel: typeof OrderStatusesModel) { }
 
     async allOrders(): Promise<OrderModel[]> {
         return this.orderModel.findAll({
             include: ['createdBy', 'client', 'orderStatus']
         })
+    }
+
+    async getOrder (orderId: string) {
+        try {
+            const order: OrderModel = await this.orderModel.findByPk(orderId)
+            return order;
+        } catch (error) {
+            console.log(error);
+            throw new InternalServerErrorException(`Error en getOrder: ${error}`);
+        }
     }
 
     async getClientId(first_name: string, last_name: string): Promise<number> {
@@ -49,15 +56,14 @@ export class OrderService {
         }
     }
 
-    async createOrder(dto: CreateOrderDto, userInReq: any) {
+    async createOrder(dto: CreateOrderDto, activeUser: UserModel) {
         try {
             const { entry, device, code, first_name, last_name } = dto;
-            const { id } = userInReq;
+            const { id } = activeUser;
             const userExistsInDb = await this.userModel.findByPk(id);
             if(!userExistsInDb){
                 throw new ForbiddenException('Usuario no encontrado mientras se creaba una orden')
             }
-            const user = userExistsInDb;
             const clientId: number = await this.getClientId(first_name, last_name)
             const orderObjectToDb = {
                 entry, 
@@ -79,29 +85,12 @@ export class OrderService {
 
     }
 
-    async createCommentInOrder() {
-
+    async updateOrder() {
+        
     }
 
-    async updateOrder(dto: createCommentDto, userInReq: any) {
-        try {
-            const {id} = userInReq;
-            const commentObject = {
-                description: dto.description,
-                user_id: id,
-                edited: false,
-                createdAt: Date.now()
-            };
-            const newComment = await this.commentModel.create(commentObject);
-            return newComment;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException(`Error creando un comentario en una orden: ${error}`);
-        }
-    }
-
-    async changeOrderStatus(userInReq: any, dto: ChangeOrderStatusDto) {
-        const {id} = userInReq;
+    async changeOrderStatus(dto: ChangeOrderStatusDto, user: UserModel) {
+        const {id} = user;
         const {status_id, order_id} = dto; 
         const selectedStatus = await this.orderStatusesModel.findByPk(status_id);
         if(!selectedStatus) {
@@ -121,16 +110,5 @@ export class OrderService {
         })
     }   
 
-    async createWorkDoneInOrder(userInReq: any, dto: CreateWorkDoneDto) {
-        const {id} = userInReq;
-        const {description, order_id} = dto;
-        const workDoneObject = {
-            description,
-            order_id,
-            user_id: id,
-            createdAt: Date.now(),
-            edited: false
-        }
-        await this.workDoneModel.create()
-    }
+    
 }

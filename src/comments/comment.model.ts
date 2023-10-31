@@ -15,6 +15,10 @@ export class CommentModel extends Model {
     description: string
 
     @AllowNull(false)
+    @Column({type: DataType.TINYINT})
+    edited: number
+
+    @AllowNull(false)
     @Column({defaultValue: Date.now()})
     createdAt: Date
 

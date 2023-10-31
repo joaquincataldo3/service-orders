@@ -26,16 +26,6 @@ export class CreateOrderDto {
 
 }
 
-export class createCommentDto {
-    @IsNotEmpty()
-    @IsString()
-    order_id: string
-
-    @IsNotEmpty()
-    @IsString()
-    description: string
-}
-
 
 export class ChangeOrderStatusDto {
     @IsNotEmpty()
@@ -48,13 +38,3 @@ export class ChangeOrderStatusDto {
 
 }
 
-export class CreateWorkDoneDto {
-    @IsNotEmpty()
-    @IsString()
-    description: string
-
-    @IsNotEmpty()
-    @IsString()
-    order_id: string
-
-}

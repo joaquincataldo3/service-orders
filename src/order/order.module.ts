@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { OrderController } from "./order.controller";
 import { OrderService } from "./order.service";
 import { SequelizeModule } from "@nestjs/sequelize";
@@ -20,7 +20,7 @@ import { WorkDoneModule } from "src/work_done/work_done.module";
     providers: [OrderService, JwtStrategy],
     imports: 
     [SequelizeModule.forFeature([OrderModel, UserModel, ClientModel, CommentModel, OrderStatusesModel, WorkDoneModel]),
-     UserModule, ClientModule, CommentModule, OrderStatusModule, WorkDoneModule],
+     UserModule, ClientModule, forwardRef(() => CommentModule), OrderStatusModule, WorkDoneModule],
     exports: [SequelizeModule]
 })
 
