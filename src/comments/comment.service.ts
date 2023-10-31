@@ -5,12 +5,18 @@ import { UpdateCommentDto } from "./dto/dto";
 import { createCommentDto } from "./dto/dto";
 import { OrderModel } from "src/order/order.model";
 import { UserModel } from "src/user/user.model";
+import { OrderService } from "src/order/order.service";
 
 @Injectable({})
 
 export class CommentService {
 
-    constructor(@InjectModel(CommentModel) private commentModel: typeof CommentModel, @InjectModel(OrderModel) private orderModel: typeof OrderModel) {}
+    constructor(
+        @InjectModel(CommentModel) private commentModel: typeof CommentModel,
+         @InjectModel(OrderModel) private orderModel: typeof OrderModel,
+         private orderService: OrderService) {}
+
+        // todo - use orderservice
 
     async getComment (commentId: string) {
         const commentExists = await this.commentModel.findByPk(commentId);
