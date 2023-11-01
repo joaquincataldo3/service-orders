@@ -40,7 +40,14 @@ export class OrderModel extends Model {
     created_by_id: number
 
     @BelongsTo(() => UserModel, {foreignKey: 'created_by_id', as: 'createdBy'})
-    user: UserModel
+    userCreating: UserModel
+
+    @ForeignKey(() => UserModel)
+    @Column({type: DataType.INTEGER})
+    last_updated_by_id: number
+
+    @BelongsTo(() => UserModel, {foreignKey: 'last_updated_by_id', as: 'updatedBy'})
+    userUpdating: UserModel
 
     @ForeignKey(() => OrderStatusesModel)
     @Column({type: DataType.INTEGER})

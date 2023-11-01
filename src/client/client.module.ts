@@ -9,7 +9,7 @@ import { JwtStrategy } from "src/auth/strategy/jwt.strategy";
     controllers: [ClientController],
     providers: [ClientService, JwtStrategy],
     imports: [SequelizeModule.forFeature([ClientModel])],
-    exports: [SequelizeModule]
+    exports: [SequelizeModule, ClientService]
 })
 
 export class ClientModule {}

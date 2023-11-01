@@ -9,6 +9,9 @@ import { OrderStatusModule } from './order_statuses/order_statuses.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { databaseConfig } from './sequelize/database.config';
 import { AuthModule } from './auth/auth.module';
+import { GuaranteeModule } from './guarantees/guarantee.module';
+import { ReceiptModule } from './receipt/receipt.module';
+import { PaymentMethodModule } from './payment_methods/payment_methods.module';
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { AuthModule } from './auth/auth.module';
     WorkDoneModule,
     OrderStatusModule,
     AuthModule,
+    GuaranteeModule,
+    ReceiptModule,
+    PaymentMethodModule,
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
