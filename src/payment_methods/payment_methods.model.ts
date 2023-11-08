@@ -5,7 +5,7 @@ import { OrderStatusesModel } from "src/order_statuses/order_statuses.model";
 import { UserModel } from "src/user/user.model";
 import { WorkDoneModel } from "src/work_done/work_done.model";
 
-@Table({tableName: 'receipts', timestamps: true, deletedAt: false, updatedAt: false})
+@Table({tableName: 'payment_methods', timestamps: false})
 export class PaymentMethodModel extends Model {
 
     @AutoIncrement

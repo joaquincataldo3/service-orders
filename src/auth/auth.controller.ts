@@ -1,11 +1,11 @@
 import {Controller, Get, UseGuards, InternalServerErrorException} from '@nestjs/common';
 import {Post, Body, HttpCode} from '@nestjs/common';
-import { UserSignUpDto, UserLoginDto } from 'src/user/dto/dto';
+import { UserSignUpDto, UserLoginDto } from 'src/user/utils/dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import {Req, Res} from '@nestjs/common'
 import {Request, Response} from 'express';
-import { jwtGuardId } from '../utils/utils';
+import { jwtGuardId } from './utils/utils';
 
 @Controller('auth')
 
@@ -29,7 +29,7 @@ export class AuthController {
        
     }
     
-    @UseGuards(AuthGuard(jwtGuardId))
+   /*  @UseGuards(AuthGuard(jwtGuardId)) */
     @Post('sign-up') 
     @HttpCode(201)
     // nestjs tiene un decorator llamado Bdoy

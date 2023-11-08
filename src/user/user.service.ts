@@ -1,17 +1,33 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectModel } from "@nestjs/sequelize";
+import { UserModel } from "./user.model";
+import { GetUserFilterParam, GetUserFilterReturn } from "./utils/dto";
 
 @Injectable({})
 
 export class UserService {
 
-    constructor() { }
+    constructor(@InjectModel(UserModel) private userModel: typeof UserModel) { }
 
     allUsers() {
         return "All users !"
     }
 
-    oneUser(userId: string) {
-        return userId;
+    async getOneUserByField(filter: GetUserFilterParam): Promise<GetUserFilterReturn> {
+        if (filter) {
+            const { field, value } = filter;
+            let where = {}
+            where[field.toLowerCase()] = value.toLowerCase();
+            const userWithFilter = await this.userModel.findOne({ where })
+            if (!userWithFilter) return { ok: false, user: undefined}
+            return {ok: true, user: userWithFilter};
+        }
+    }
+
+    async getOneUserById(userId: string): Promise<UserModel> {
+        const userWithFilter = await this.userModel.findByPk(userId);
+        if(!userWithFilter) throw new NotFoundException(`No se pudo encontrar usuario con id: ${userId}`)
+        return userWithFilter;
     }
 
 }

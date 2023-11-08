@@ -8,10 +8,10 @@ import { UserModule } from 'src/user/user.module';
 import { JwtStrategy } from './strategy/jwt.strategy';
 
 @Module({
+    controllers: [AuthController],
+    providers: [AuthService, JwtStrategy],
     imports: [SequelizeModule.forFeature([UserModel]), JwtModule.register({}), UserModule],
     exports: [SequelizeModule],
-    providers: [AuthService, JwtStrategy],
-    controllers: [AuthController]
 })
 
 export class AuthModule {}

@@ -9,7 +9,7 @@ import { OrderStatusesController } from "./order_statuses.controller";
     controllers: [OrderStatusesController],
     providers: [OrderStatusesService],
     imports: [SequelizeModule.forFeature([OrderStatusesModel])],
-    exports: [SequelizeModule]
+    exports: [SequelizeModule, OrderStatusesService]
 })
 
 export class OrderStatusModule {}

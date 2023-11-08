@@ -1,9 +1,9 @@
-import { Body, Controller, Get, Post, Req, UseGuards,  Put, HttpCode, Param } from "@nestjs/common";
+import { Body, Controller, Get, Post, Req, UseGuards,  Put, HttpCode, Param, Query } from "@nestjs/common";
 import { OrderService } from "./order.service";
-import { ChangeOrderStatusDto, CreateOrderDto } from "./dto/dto";
+import { ChangeOrderStatusDto, CreateOrderDto } from "./utils/dto";
 import { AuthGuard } from "@nestjs/passport";
 import {Request} from 'express';
-import { jwtGuardId } from "src/utils/utils";
+import { jwtGuardId } from "src/auth/utils/utils";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
 import { OrderModel } from "./order.model";
@@ -17,8 +17,9 @@ export class OrderController {
     constructor (private orderService: OrderService) {}
 
     @Get('all')
-    async allOrders(): Promise<OrderModel[]>{
-        return await this.orderService.allOrders()
+    async allOrders(@Query('orderStatus') orderStatus: string): Promise<OrderModel[]>{
+        const status = orderStatus ? orderStatus : '';
+        return await this.orderService.allOrders(status)
     }
 
     @Get('/:orderId')

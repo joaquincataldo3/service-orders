@@ -32,21 +32,34 @@ export class ReceiptModel extends Model {
     created_by_id: number
 
     @BelongsTo(() => UserModel, {foreignKey: 'created_by_id', as: 'createdBy'})
-    userCreating: UserModel
+    createdBy: UserModel
+
+    @ForeignKey(() => UserModel)
+    @Column({type: DataType.INTEGER})
+    last_updated_by_id: number
+
+    @BelongsTo(() => UserModel, {foreignKey: 'last_updated_by_id', as: 'updatedBy'})
+    updatedBy: UserModel
 
     @ForeignKey(() => PaymentMethodModel)
     @Column({type: DataType.INTEGER})
     payment_method_id: number
 
     @BelongsTo(() => PaymentMethodModel, {foreignKey: 'payment_method_id', as: 'paymentMethod'})
-    payment_method: PaymentMethodModel
+    paymentMethod: PaymentMethodModel
 
     @ForeignKey(() => GuaranteeModel)
     @Column({type: DataType.INTEGER})
     guarantee_id: number
 
     @BelongsTo(() => GuaranteeModel, {foreignKey: 'guarantee_id', as: 'guaranteeTime'})
-    guarantee: GuaranteeModel
+    guaranteeTime: GuaranteeModel
 
-    
+    @ForeignKey(() => ClientModel)
+    @Column({type: DataType.INTEGER})
+    client_id: number
+
+    @BelongsTo(() => ClientModel, {foreignKey: 'client_id', as: 'client'})
+    client: ClientModel
+
 }

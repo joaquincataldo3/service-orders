@@ -1,8 +1,8 @@
-  import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+  import { Injectable, InternalServerErrorException, NotFoundException, forwardRef, Inject } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { CommentModel } from "./comment.model";
-import { UpdateCommentDto } from "./dto/dto";
-import { createCommentDto } from "./dto/dto";
+import { UpdateCommentDto } from "./utils/dto";
+import { createCommentDto } from "./utils/dto";
 import { UserModel } from "src/user/user.model";
 import { OrderService } from "src/order/order.service";
 
@@ -13,8 +13,9 @@ export class CommentService {
 
     constructor(
         @InjectModel(CommentModel) private commentModel: typeof CommentModel,
-        private orderService: OrderService) {}
+        @Inject(forwardRef(() => OrderService)) private orderService: OrderService) {}
 
+        
     async getComment (commentId: string) {
         const commentExists = await this.commentModel.findByPk(commentId);
         if (!commentExists) throw new NotFoundException("Comentario no encontrado");
@@ -26,8 +27,8 @@ export class CommentService {
     async createComment(dto: createCommentDto, user: UserModel) {
         try {
             const {description, order_id} = dto;
-            const order = await this.orderService.getOrder(order_id);
-            if (!order) throw new NotFoundException('Orden no encontrada');
+            // si pasa es porque encontró la orden
+            await this.orderService.getOrder(order_id);
             const objectToDb = {
                 description,
                 order_id

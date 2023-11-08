@@ -3,9 +3,10 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserModel } from 'src/user/user.model'
-import { UserLoginDto, UserToFrontDto, UserSignUpDto } from 'src/user/dto/dto'
+import { UserLoginDto, UserToFrontDto, UserSignUpDto } from 'src/user/utils/dto'
 import { compare, hash } from 'bcryptjs'
 import {Response, Request} from 'express';
+import { UserService } from 'src/user/user.service'
 
 @Injectable({})
 
@@ -13,7 +14,8 @@ export class AuthService {
     
     constructor(@InjectModel(UserModel) private userModel: typeof UserModel,
     private configService: ConfigService, 
-    private jwt: JwtService) {}
+    private jwt: JwtService,
+    private userService: UserService) {}
 
     private cookieName: string = "cookie_access_token";
 
@@ -23,7 +25,21 @@ export class AuthService {
         return cookie;
     }
 
-    async signToken (id: number, email: string, username: string, method: string): Promise<string> { 
+    async logout(id: number, email: string, username: string, res: Response): Promise<string>  {
+        const payload = {
+            email,
+            username,
+            id
+        }
+        const secret: string = this.configService.get<string>('SECRET')
+        res.clearCookie(this.cookieName)
+        return this.jwt.signAsync(payload, {
+            expiresIn: '1s',
+            secret
+        })
+    }
+
+    async signToken (id: number, email: string, username: string): Promise<string> { 
         
         const payload = {
             email,
@@ -33,7 +49,7 @@ export class AuthService {
         const secret: string = this.configService.get<string>('SECRET')
         // devuelve un token
         return this.jwt.signAsync(payload, {
-            expiresIn: `${method === 'login' ? '1h' : '1s'}`,
+            expiresIn: '1h',
             secret
         })
     }
@@ -41,22 +57,19 @@ export class AuthService {
     async login(dto: UserLoginDto, res: Response): Promise<UserToFrontDto> {
         
         const {email, password} = dto
-        const emailInDB = await this.userModel.findOne({
-            where: {
-                email
-            }
-        })
-        if(!emailInDB){
+        const isEmailInDb = await this.userService.getOneUserByField({field: 'email', value: email});
+        if(!isEmailInDb.ok){
            throw new ForbiddenException('El email no se encuentra en la base de datos');
         }
-        const user: UserModel = emailInDB;
-        const pwMatches: boolean = await compare(password, user.password);
+        const user = isEmailInDb.user;
+        const bodyPassword = password.toLowerCase();
+        const userInDbPassword = user.password;
+        const pwMatches: boolean = await compare(bodyPassword, userInDbPassword);
         if(!pwMatches) {
             throw new ForbiddenException('Las contraseñas no coinciden')
         };
-        const method = 'login';
-        const id = user.id;
-        const token = await this.signToken(id, email, password, method);
+        const {id} = user;
+        const token = await this.signToken(id, email, password);
         const userToFront: UserToFrontDto = {
             id: user.id,
             email: user.email,
@@ -72,28 +85,22 @@ export class AuthService {
             const { password, email, username } = dto;
             const hashedPw = await hash(password, 10);
             const userData = {
-                email,
-                username,
+                email: email.toLowerCase(),
+                username: email.toLowerCase(),
                 password: hashedPw
             };
-            const usernameInDb = await this.userModel.findOne({
-                where: {username}
-            })
-            // devuelve un 409
-            if(usernameInDb){
+            const usernameInDb = await this.userService.getOneUserByField({field: 'username', value: username})
+            if(usernameInDb.ok){
                 throw new ConflictException('El usuario ya se encuentra en la base de datos')
             }
-            const emailInDb = await this.userModel.findOne({
-                where: {email}
-            })
-            // devuelve un 409
-            if(emailInDb){
-                throw new ConflictException('El email ya se encuentra en la base de datos')
+            const emailInDb = await this.userService.getOneUserByField({field: 'email', value: email})
+            if(emailInDb.ok){
+                throw new ConflictException('El usuario ya se encuentra en la base de datos')
             }
             const userToDb: UserModel = await this.userModel.create(userData);
             const method = 'login';
             const id = userToDb.id;
-            const token: string = await this.signToken(id,userToDb.email, userToDb.username, method)
+            const token: string = await this.signToken(id,userToDb.email, userToDb.username);
             const userToFront: UserToFrontDto = {
                 id: userToDb.id,
                 email: userToDb.email,

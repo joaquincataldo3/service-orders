@@ -1,8 +1,7 @@
 
 // tenemos que hacerlo con clase
-
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
-import express from 'express';
+import { UserModel } from "../user.model";
 
 // asi podemos validar los datos
 export class UserSignUpDto {
@@ -42,3 +41,12 @@ export interface UserToFrontDto {
    access_token: string
 }
 
+export interface GetUserFilterParam {
+   field: string,
+   value: string
+}
+
+export interface GetUserFilterReturn {
+   ok: boolean,
+   user?: UserModel | undefined
+}

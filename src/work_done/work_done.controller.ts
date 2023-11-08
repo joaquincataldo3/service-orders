@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpCode, Param, Post, UseGuards } from "@nestjs
 import { AuthGuard } from "@nestjs/passport";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
-import { jwtGuardId } from "src/utils/utils";
+import { jwtGuardId } from "src/auth/utils/utils";
 import { WorkDoneService } from "./work_done.service";
 import { CreateWorkDoneDto } from "./dto/dto";
 

@@ -5,7 +5,7 @@ import { OrderStatusesModel } from "src/order_statuses/order_statuses.model";
 import { UserModel } from "src/user/user.model";
 import { WorkDoneModel } from "src/work_done/work_done.model";
 
-@Table({tableName: 'orders', timestamps: true})
+@Table({tableName: 'orders', timestamps: true, deletedAt: false})
 export class OrderModel extends Model {
 
     @AutoIncrement
@@ -32,22 +32,19 @@ export class OrderModel extends Model {
     @Column({type: DataType.DATE})
     updatedAt: Date
 
-    @Column({type: DataType.DATE})
-    deletedAt: Date
-
     @ForeignKey(() => UserModel)
     @Column({type: DataType.INTEGER})
     created_by_id: number
 
     @BelongsTo(() => UserModel, {foreignKey: 'created_by_id', as: 'createdBy'})
-    userCreating: UserModel
+    createdBy: UserModel
 
     @ForeignKey(() => UserModel)
     @Column({type: DataType.INTEGER})
     last_updated_by_id: number
 
     @BelongsTo(() => UserModel, {foreignKey: 'last_updated_by_id', as: 'updatedBy'})
-    userUpdating: UserModel
+    updatedBy: UserModel
 
     @ForeignKey(() => OrderStatusesModel)
     @Column({type: DataType.INTEGER})

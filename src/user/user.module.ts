@@ -9,7 +9,7 @@ import { JwtModule } from "@nestjs/jwt";
     controllers: [UserController],
     providers: [UserService],
     imports: [SequelizeModule.forFeature([UserModel]), JwtModule.register({})],
-    exports: [SequelizeModule],
+    exports: [SequelizeModule, UserService],
 })
 
 export class UserModule {}

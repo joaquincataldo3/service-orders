@@ -1,8 +1,8 @@
 import { Controller, Delete, Param, UseGuards, Put, Body, Post} from "@nestjs/common";
 import { CommentService } from "./comment.service";
 import { AuthGuard } from "@nestjs/passport";
-import { jwtGuardId } from "src/utils/utils";
-import { UpdateCommentDto, createCommentDto } from "./dto/dto";
+import { jwtGuardId } from "src/auth/utils/utils";
+import { UpdateCommentDto, createCommentDto } from "./utils/dto";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
 

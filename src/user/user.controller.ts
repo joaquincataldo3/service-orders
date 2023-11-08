@@ -12,7 +12,7 @@ export class UserController {
     @Get(':userId')
     // usamos el decorator param y el parseint pipe, para que valide que sea un numero y lo parsee
     oneUser(@Param('userId', ParseIntPipe) userId: string){
-        return this.userService.oneUser(userId);
+        return this.userService.getOneUserById(userId);
     }
 
    

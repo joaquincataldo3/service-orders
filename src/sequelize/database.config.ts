@@ -7,6 +7,9 @@ import { ClientModel } from 'src/client/client.model';
 import { OrderStatusesModel } from 'src/order_statuses/order_statuses.model';
 import { CommentModel } from 'src/comments/comment.model';
 import { WorkDoneModel } from 'src/work_done/work_done.model';
+import { ReceiptModel } from 'src/receipt/receipt.model';
+import { GuaranteeModel } from 'src/guarantees/guarantee.model';
+import { PaymentMethodModel } from 'src/payment_methods/payment_methods.model';
 
 export const databaseConfig = (configService: ConfigService): SequelizeModuleOptions => {
 
@@ -25,7 +28,7 @@ export const databaseConfig = (configService: ConfigService): SequelizeModuleOpt
     username,
     password,
     database,
-    models: [OrderModel, UserModel, OrderStatusesModel, ClientModel, CommentModel, WorkDoneModel]
+    models: [OrderModel, UserModel, OrderStatusesModel, ClientModel, CommentModel, WorkDoneModel, ReceiptModel, GuaranteeModel, PaymentMethodModel]
   };
 }
  

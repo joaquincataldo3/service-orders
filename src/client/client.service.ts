@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { ClientModel } from "./client.model";
 
@@ -6,14 +6,17 @@ import { ClientModel } from "./client.model";
 
 export class ClientService {
 
-    constructor(@InjectModel(ClientModel) private clientModel: typeof ClientModel) {}
+    constructor(
+        @InjectModel(ClientModel) private clientModel: typeof ClientModel) {}
 
     allClients(){
         return "All clients"
     }
 
-    oneClient() {
-        return "One client !"
+    async getOneClient(clientId: string) {
+        const client = await this.clientModel.findByPk(clientId);
+        if (!client) throw new NotFoundException('Cliente no encontrado')
+        return client
     }
 
     async getClientId(first_name: string, last_name: string): Promise<number> {
@@ -23,19 +26,19 @@ export class ClientService {
                 last_name
             }
         })
+        let clientId: number;
         if (clientExistsInDb) {
             const client = clientExistsInDb;
-            const clientId = client.id;
-            return clientId;
+            clientId = client.id;
         } else {
             const clientObjectToDb = {
                 first_name,
                 last_name
             };
             const newClient = await this.clientModel.create(clientObjectToDb);
-            const clientId = newClient.id;
-            return clientId;
+            clientId = newClient.id;
         }
+        return clientId;
     }
 
 }
