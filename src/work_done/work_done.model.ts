@@ -30,6 +30,4 @@ export class WorkDoneModel extends Model {
     @BelongsTo(() => UserModel, {foreignKey: 'user_id', as: 'user'})
     user: UserModel
 
-    
-
 }

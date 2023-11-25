@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { InjectModel } from '@nestjs/sequelize'
 import { UserModel } from 'src/user/user.model'
-import { UserLoginDto, UserToFrontDto, UserSignUpDto } from 'src/user/utils/dto'
+import { UserLoginDto, UserToFront, UserSignUpDto } from 'src/user/dto/dto'
 import { compare, hash } from 'bcryptjs'
 import {Response, Request} from 'express';
 import { UserService } from 'src/user/user.service'
@@ -54,7 +54,7 @@ export class AuthService {
         })
     }
 
-    async login(dto: UserLoginDto, res: Response): Promise<UserToFrontDto> {
+    async login(dto: UserLoginDto, res: Response): Promise<UserToFront> {
         
         const {email, password} = dto
         const isEmailInDb = await this.userService.getOneUserByField({field: 'email', value: email});
@@ -70,7 +70,7 @@ export class AuthService {
         };
         const {id} = user;
         const token = await this.signToken(id, email, password);
-        const userToFront: UserToFrontDto = {
+        const userToFront: UserToFront = {
             id: user.id,
             email: user.email,
             username: user.username,
@@ -80,7 +80,7 @@ export class AuthService {
         return userToFront;
     }
 
-    async signUp(dto: UserSignUpDto): Promise<UserToFrontDto> {
+    async signUp(dto: UserSignUpDto): Promise<UserToFront> {
 
             const { password, email, username } = dto;
             const hashedPw = await hash(password, 10);
@@ -101,7 +101,7 @@ export class AuthService {
             const method = 'login';
             const id = userToDb.id;
             const token: string = await this.signToken(id,userToDb.email, userToDb.username);
-            const userToFront: UserToFrontDto = {
+            const userToFront: UserToFront = {
                 id: userToDb.id,
                 email: userToDb.email,
                 username: userToDb.username,

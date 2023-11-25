@@ -1,7 +1,7 @@
 import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { OrderModel } from "./order.model";
-import { ChangeOrderStatusDto, CreateOrderDto } from "./utils/dto";
+import { ChangeOrderStatusDto, CreateOrderDto } from "./dto/dto";
 import { UserModel } from "src/user/user.model";
 import { ClientModel } from "src/client/client.model";
 import { CommentModel } from "src/comments/comment.model";

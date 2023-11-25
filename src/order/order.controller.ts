@@ -1,15 +1,22 @@
 import { Body, Controller, Get, Post, Req, UseGuards,  Put, HttpCode, Param, Query } from "@nestjs/common";
 import { OrderService } from "./order.service";
-import { ChangeOrderStatusDto, CreateOrderDto } from "./utils/dto";
+import { ChangeOrderStatusDto, CreateOrderDto } from "./dto/dto";
 import { AuthGuard } from "@nestjs/passport";
 import {Request} from 'express';
 import { jwtGuardId } from "src/auth/utils/utils";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
 import { OrderModel } from "./order.model";
+import { ApiParam, ApiTags } from "@nestjs/swagger";
 
-// todas las rutas protegidas por el authguard
+
+// swagger tag Orders
+@ApiTags('Orders')
+
+// all routes protected by authguard
 @UseGuards(AuthGuard(jwtGuardId))
+
+// /orders prefix
 @Controller('orders')
 
 export class OrderController {
@@ -22,6 +29,9 @@ export class OrderController {
         return await this.orderService.allOrders(status)
     }
 
+    @ApiParam({
+        name: 'orderId'
+    })
     @Get('/:orderId')
     async getOrder(@Param() orderId: string): Promise<OrderModel> {
         return await this.orderService.getOrder(orderId);

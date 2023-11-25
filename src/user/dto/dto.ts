@@ -2,19 +2,22 @@
 // tenemos que hacerlo con clase
 import { IsEmail, IsNotEmpty, IsString } from "class-validator";
 import { UserModel } from "../user.model";
+import { ApiProperty } from "@nestjs/swagger";
 
 // asi podemos validar los datos
 export class UserSignUpDto {
 
-   // validamos de esta maenra
+   @ApiProperty()
    @IsNotEmpty()
    @IsEmail()
    email: string
 
+   @ApiProperty()
    @IsNotEmpty()
    @IsString()
    password: string
 
+   @ApiProperty()
    @IsNotEmpty()
    @IsString()
    username: string
@@ -23,18 +26,20 @@ export class UserSignUpDto {
 
 export class UserLoginDto {
 
-   // validamos de esta maenras
+   @ApiProperty()
    @IsNotEmpty()
    @IsEmail()
    email: string
 
+   @ApiProperty()
    @IsNotEmpty()
    @IsString()
    password: string
 
 }
 
-export interface UserToFrontDto {
+export interface UserToFront {
+   
    id: number
    email: string
    username: string

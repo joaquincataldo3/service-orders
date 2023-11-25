@@ -1,8 +1,8 @@
   import { Injectable, InternalServerErrorException, NotFoundException, forwardRef, Inject } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { CommentModel } from "./comment.model";
-import { UpdateCommentDto } from "./utils/dto";
-import { createCommentDto } from "./utils/dto";
+import { UpdateCommentDto } from "./dto/dto";
+import { CreateCommentDto } from "./dto/dto";
 import { UserModel } from "src/user/user.model";
 import { OrderService } from "src/order/order.service";
 
@@ -24,7 +24,7 @@ export class CommentService {
     }
 
 
-    async createComment(dto: createCommentDto, user: UserModel) {
+    async createComment(dto: CreateCommentDto, user: UserModel) {
         try {
             const {description, order_id} = dto;
             // si pasa es porque encontró la orden

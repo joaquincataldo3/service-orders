@@ -1,5 +1,6 @@
 import { AllowNull, AutoIncrement, Column, DataType, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { OrderModel } from "src/order/order.model";
+import { ReceiptModel } from "src/receipt/receipt.model";
 
 @Table({tableName: 'clients', timestamps: true, updatedAt: false, deletedAt: false})
 export class ClientModel extends Model {
@@ -22,4 +23,7 @@ export class ClientModel extends Model {
 
     @HasMany(() => OrderModel)
     orders: OrderModel[]
+
+    @HasMany(() => ReceiptModel)
+    receipts: ReceiptModel[]
 }

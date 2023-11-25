@@ -1,9 +1,5 @@
 import { AllowNull, AutoIncrement, BelongsTo, Column, DataType, ForeignKey, HasMany, PrimaryKey, Table, Model } from "sequelize-typescript";
-import { ClientModel } from "src/client/client.model";
-import { CommentModel } from "src/comments/comment.model";
-import { OrderStatusesModel } from "src/order_statuses/order_statuses.model";
-import { UserModel } from "src/user/user.model";
-import { WorkDoneModel } from "src/work_done/work_done.model";
+import { ReceiptModel } from "src/receipt/receipt.model";
 
 @Table({tableName: 'payment_methods', timestamps: false})
 export class PaymentMethodModel extends Model {
@@ -17,6 +13,7 @@ export class PaymentMethodModel extends Model {
     @Column({type: DataType.TEXT})
     method: string
 
-
+    @BelongsTo(() => ReceiptModel, {foreignKey: 'guarantee_id', as: 'receipt'})
+    receipt: ReceiptModel[]
     
 }

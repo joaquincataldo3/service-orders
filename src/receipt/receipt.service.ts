@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { ReceiptModel } from "./receipt.model";
-import { CreateReceiptDto } from "./utils/dto";
+import { CreateReceiptDto } from "./dto/dto";
 import { ClientService } from "src/client/client.service";
 import { UserModel } from "src/user/user.model";
 

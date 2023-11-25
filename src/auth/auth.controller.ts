@@ -1,12 +1,20 @@
 import {Controller, Get, UseGuards, InternalServerErrorException} from '@nestjs/common';
 import {Post, Body, HttpCode} from '@nestjs/common';
-import { UserSignUpDto, UserLoginDto } from 'src/user/utils/dto';
+import { UserSignUpDto, UserLoginDto } from 'src/user/dto/dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import {Req, Res} from '@nestjs/common'
 import {Request, Response} from 'express';
 import { jwtGuardId } from './utils/utils';
+import { ApiTags } from '@nestjs/swagger';
 
+// swagger 
+@ApiTags('Auth')
+
+// all routes protected by guard
+@UseGuards(AuthGuard(jwtGuardId))
+
+// /auth prefix
 @Controller('auth')
 
 export class AuthController {

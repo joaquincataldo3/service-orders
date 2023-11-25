@@ -36,3 +36,12 @@ lerna-debug.log*
 
 #env
 .env
+
+config.json
+
+/migrations
+
+/config
+
+/models
+

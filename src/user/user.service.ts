@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { UserModel } from "./user.model";
-import { GetUserFilterParam, GetUserFilterReturn } from "./utils/dto";
+import { GetUserFilterParam, GetUserFilterReturn } from "./dto/dto";
 
 @Injectable({})
 
