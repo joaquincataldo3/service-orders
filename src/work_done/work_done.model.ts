@@ -1,10 +1,11 @@
-import { Table, Model, Column, DataType, PrimaryKey, AllowNull, ForeignKey, BelongsTo } from "sequelize-typescript";
+import { Table, Model, Column, DataType, PrimaryKey, AllowNull, ForeignKey, BelongsTo, AutoIncrement } from "sequelize-typescript";
 import { OrderModel } from "src/order/order.model";
 import { UserModel } from "src/user/user.model";
 
-@Table({tableName: 'works_done'})
+@Table({tableName: 'works_done', timestamps: false})
 export class WorkDoneModel extends Model {
 
+    @AutoIncrement
     @PrimaryKey
     @Column({type: DataType.INTEGER})
     id: number
@@ -20,6 +21,10 @@ export class WorkDoneModel extends Model {
     @ForeignKey(() => OrderModel)
     @Column({type: DataType.INTEGER})
     order_id: number
+
+    @AllowNull(false)
+    @Column({type: DataType.DATE})
+    createdAt: Date
 
     @BelongsTo(() => OrderModel, {foreignKey: 'order_id', as: 'order'})
     order: OrderModel

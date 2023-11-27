@@ -19,9 +19,10 @@ export class CommentModel extends Model {
     edited: number
 
     @AllowNull(false)
-    @Column({defaultValue: Date.now()})
+    @Column({type: DataType.DATE})
     createdAt: Date
 
+    @AllowNull(false)
     @ForeignKey(() => UserModel)
     @Column({type: DataType.INTEGER})
     user_id: number

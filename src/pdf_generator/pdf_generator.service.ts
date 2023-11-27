@@ -157,7 +157,7 @@ export class PdfGeneratorService {
         return htmlContent;
     }
 
-    async createReceiptPdf(receiptId: string): Promise<Buffer> {
+    async createReceiptPdf(receiptId: number): Promise<Buffer> {
         const receipt = await this.receiptService.getOneReceipt(receiptId);
         const { id, description, total } = receipt;
         const receiptContent: InjectReceiptDataContent = {
@@ -180,7 +180,7 @@ export class PdfGeneratorService {
 
     }
 
-    async createOrderPdf(orderId: string): Promise<Buffer> {
+    async createOrderPdf(orderId: number): Promise<Buffer> {
         const order = await this.orderService.getOrder(orderId);
         const { id, device, code, entry, createdAt } = order;
         const orderContent: InjectOrderDataContent = {

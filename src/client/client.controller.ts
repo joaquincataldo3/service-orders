@@ -3,6 +3,7 @@ import { ClientService } from "./client.service";
 import { AuthGuard } from "@nestjs/passport";
 import { jwtGuardId } from "src/auth/utils/utils";
 import { ApiParam, ApiTags } from "@nestjs/swagger";
+import { GetClientParams } from "./interfaces/interfaces";
 
 @ApiTags('Clients')
 
@@ -26,8 +27,9 @@ export class ClientController {
         name: 'clientId'
     })
     @Get('one/:clientId')
-    oneClient(@Param() clientId: string) {
-        return this.clientService.getOneClient(clientId)
+    oneClient(@Param() params: GetClientParams) {
+        const clientIdParams = Number(params.clientId);
+        return this.clientService.getOneClient(clientIdParams)
     }
 
     

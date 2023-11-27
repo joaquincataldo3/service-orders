@@ -8,6 +8,7 @@ import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
 import { OrderModel } from "./order.model";
 import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
+import { GetOrderParam } from "./utils/interfaces";
 
 
 // swagger tag Orders
@@ -39,8 +40,9 @@ export class OrderController {
         name: 'orderId'
     })
     @Get('/:orderId')
-    async getOrder(@Param() orderId: string): Promise<OrderModel> {
-        return await this.orderService.getOrder(orderId);
+    async getOrder(@Param() params: GetOrderParam): Promise<OrderModel> {
+        const orderIdParam = Number(params.orderId);
+        return await this.orderService.getOrder(orderIdParam);
     }
 
     @Post('create')
@@ -53,7 +55,8 @@ export class OrderController {
 
     @Put('change-status')
     async changeOrderStatus (@Body() dto: ChangeOrderStatusDto, @GetUserDecorator() user: UserModel): Promise<boolean> {
-        return await this.orderService.changeOrderStatus(dto, user); 
+        const userId = user.id
+        return await this.orderService.changeOrderStatus(dto, userId); 
     }
 
    

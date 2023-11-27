@@ -20,7 +20,7 @@ import { WorkDoneModule } from "src/work_done/work_done.module";
     providers: [OrderService, JwtStrategy],
     imports: 
     [SequelizeModule.forFeature([OrderModel, UserModel, ClientModel, CommentModel, OrderStatusesModel, WorkDoneModel]),
-     UserModule, ClientModule, OrderStatusModule, WorkDoneModule, CommentModule],
+     UserModule, ClientModule, OrderStatusModule, CommentModule],
     exports: [SequelizeModule, OrderService]
 })
 

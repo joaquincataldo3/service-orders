@@ -27,10 +27,11 @@ export class WorkDoneController {
 
     constructor(private workDoneService: WorkDoneService) {}
 
-    @Post('create/:orderId')
+    @Post('create')
     @HttpCode(201)
-    createWorkDone(@Param() orderId: string, @GetUserDecorator() user: UserModel, @Body() dto: CreateWorkDoneDto){
-        return this.workDoneService.createWorkDone(orderId, user, dto);
+    createWorkDone(@GetUserDecorator() user: UserModel, @Body() dto: CreateWorkDoneDto){
+        const userId = user.id;
+        return this.workDoneService.createWorkDone(userId, dto);
     }
 
 }

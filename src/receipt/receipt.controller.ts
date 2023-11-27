@@ -6,12 +6,18 @@ import { ReceiptService } from "./receipt.service";
 import { CreateReceiptDto } from "./dto/dto";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
-import { ApiTags, ApiParam } from "@nestjs/swagger";
+import { ApiTags, ApiParam, ApiHeader } from "@nestjs/swagger";
+import { GetReceiptParams } from "./interfaces/interfaces";
 
 @ApiTags('Receipts')
 
 // routes protected by guard
 @UseGuards(AuthGuard(jwtGuardId))
+
+@ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer <token>'
+})
 
 // /receipts prefix
 @Controller('receipts')
@@ -29,8 +35,9 @@ export class ReceiptController {
         name: 'receiptId'
     })
     @Get(':receiptId')
-    async getOneReceipt(@Param() receiptId: string): Promise<ReceiptModel>{
-        return await this.receiptService.getOneReceipt(receiptId);
+    async getOneReceipt(@Param() params: GetReceiptParams): Promise<ReceiptModel>{
+        const receiptIdParams = Number(params.receiptId);
+        return await this.receiptService.getOneReceipt(receiptIdParams);
     }
 
     @Post('/create') 

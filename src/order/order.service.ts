@@ -1,11 +1,8 @@
-import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
+import {  Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { OrderModel } from "./order.model";
 import { ChangeOrderStatusDto, CreateOrderDto } from "./dto/dto";
 import { UserModel } from "src/user/user.model";
-import { ClientModel } from "src/client/client.model";
-import { CommentModel } from "src/comments/comment.model";
-import { OrderStatusesModel } from "src/order_statuses/order_statuses.model";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { ClientService } from "src/client/client.service";
 import { CommentService } from "src/comments/comment.service";
@@ -17,7 +14,6 @@ export class OrderService {
 
     constructor
         (@InjectModel(OrderModel) private orderModel: typeof OrderModel,
-            @InjectModel(UserModel) private userModel: typeof UserModel,
             @Inject(forwardRef(() => CommentService)) private commentService: CommentService,
             private clientService: ClientService,
             private orderStatusesService: OrderStatusesService) { }
@@ -38,11 +34,12 @@ export class OrderService {
         })
     }
 
-    async getOrder(orderId: string) {
+    async getOrder(orderId: number) {
         try {
             const order: OrderModel = await this.orderModel.findByPk(orderId, {
                 include: ['createdBy', 'updatedBy', 'client']
             });
+            console.log(order)
             if (!order) throw new NotFoundException("Orden no encontrada")
             return order;
         } catch (error) {
@@ -56,7 +53,6 @@ export class OrderService {
         try {
             const { entry, device, code, first_name, last_name } = dto;
             const { id } = activeUser;
-            console.log(id);
             const clientId: number = await this.clientService.getClientId(first_name, last_name)
             const orderObjectToDb = {
                 entry,
@@ -78,35 +74,42 @@ export class OrderService {
 
     }
 
-    async changeOrderStatus(dto: ChangeOrderStatusDto, user: UserModel) {
-        const { id } = user;
+    async changeOrderStatus(dto: ChangeOrderStatusDto, userId: number) {
         const { status_id, order_id } = dto;
-        const selectedStatus = await this.orderStatusesService.getStatus(status_id);
-        const orderUpdated = await this.orderModel.update({
+        const statusIdStr = status_id.toString()
+        const selectedStatus = await this.orderStatusesService.getStatus(statusIdStr);
+        const [affectedCount] = await this.orderModel.update({
             order_status_id: status_id
         }, {
             where: {
                 id: order_id
             }
         })
-        const [affectedCount]: [number] = orderUpdated
-        if (affectedCount == 0) throw new NotFoundException('La orden no fue encontrada y actualizada')
-        const createCommentDto = { description: `Estado de orden cambiado a ${selectedStatus.status}`, order_id }
-        await this.commentService.createComment(createCommentDto, user)
+        if (affectedCount == 0) throw new NotFoundException('No se actualizó ningún dato de la orden')
+        const createCommentDto = { 
+                description: `Estado de orden cambiado a ${selectedStatus.status}`,
+                order_id: Number(order_id) }
+        await this.commentService.createComment(createCommentDto, userId)
         return true;
     }
 
-    async updateDateOfUpdate(orderId: string, @GetUserDecorator() userId: number): Promise<boolean> {
-        const orderUpdated = await this.orderModel.update({
-            updatedAt: Date.now(),
-            last_updated_by: userId
-        }, {
-            where: {
+    async updateDateOfUpdate(orderId: number, @GetUserDecorator() userId: number): Promise<boolean> {
+        const currentDate = new Date();
+
+        const [affectedCount] = await this.orderModel.update(
+            {
+              updatedAt: currentDate,
+              last_updated_by_id: userId
+            },
+            {
+              where: {
                 id: orderId
+              }
             }
-        })
-        const [affectedCount]: [number] = orderUpdated;
-        if (affectedCount == 0) throw new NotFoundException('updateDateOfUpdate: No se encontró la orden')
+        );
+        if(affectedCount === 0) {
+            throw new NotFoundException("No se actualizó ningún dato de la orden");
+        }
         return true;
     }
 

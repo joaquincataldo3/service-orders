@@ -23,7 +23,7 @@ export class ReceiptService {
         }
     }
 
-    async getOneReceipt(receiptId: string) {
+    async getOneReceipt(receiptId: number) {
         try {
             const receipt = await this.receiptModel.findByPk(receiptId, {
                 include: ['createdBy', 'paymentMethod', 'guaranteeTime', 'client']

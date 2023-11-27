@@ -10,7 +10,7 @@ import { OrderModule } from "src/order/order.module";
 @Module({
     controllers: [WorkDoneController],
     providers: [WorkDoneService],
-    imports: [SequelizeModule.forFeature([WorkDoneModel, OrderModel])],
+    imports: [SequelizeModule.forFeature([WorkDoneModel, OrderModel]), OrderModule],
     exports: [SequelizeModule]
 })
 

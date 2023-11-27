@@ -16,6 +16,11 @@ export class CommentService {
         @Inject(forwardRef(() => OrderService)) private orderService: OrderService) {}
 
         
+    async getAllComments(): Promise<CommentModel[]> {
+        const comments = await this.commentModel.findAll();
+        return comments;
+    }
+
     async getComment (commentId: string) {
         const commentExists = await this.commentModel.findByPk(commentId);
         if (!commentExists) throw new NotFoundException("Comentario no encontrado");
@@ -24,17 +29,20 @@ export class CommentService {
     }
 
 
-    async createComment(dto: CreateCommentDto, user: UserModel) {
+    async createComment(dto: CreateCommentDto, userId: number): Promise<CommentModel> {
         try {
             const {description, order_id} = dto;
             // si pasa es porque encontró la orden
             await this.orderService.getOrder(order_id);
             const objectToDb = {
                 description,
-                order_id
+                order_id,
+                edited: 0,
+                user_id: userId,
+                createdAt: Date.now()
             }
             const comment = await this.commentModel.create(objectToDb);
-            const userId = user.id;
+
             await this.orderService.updateDateOfUpdate(order_id, userId);
             return comment;
         } catch (error) {

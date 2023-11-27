@@ -29,7 +29,7 @@ export class PdfGeneratorController {
         name: "orderId"
     })
     @Get('order/:orderId')
-    async createOrderPdf(@Param() orderId: string, @Res() res: Response): Promise<void> {
+    async createOrderPdf(@Param() orderId: number, @Res() res: Response): Promise<void> {
         const pdfBuffer = await this.pdfGenService.createOrderPdf(orderId);
 
         res.setHeader('Content-Type', 'application/pdf');
@@ -41,8 +41,9 @@ export class PdfGeneratorController {
         name: "receiptId"
     })
     @Get('receipt/:receiptId')
-    async createReceiptPdf(@Param() receiptId: string, @Res() res: Response): Promise<void>{
-        const pdfBuffer = await this.pdfGenService.createReceiptPdf(receiptId);
+    async createReceiptPdf(@Param() params: GetReceiptParam, @Res() res: Response): Promise<void>{
+        const receiptIdParams = Number(params.receiptId);
+        const pdfBuffer = await this.pdfGenService.createReceiptPdf(receiptIdParams);
 
         res.setHeader('Content-Type', 'application/pdf');
         res.send(pdfBuffer);

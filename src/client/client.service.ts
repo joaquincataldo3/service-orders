@@ -13,7 +13,17 @@ export class ClientService {
         return "All clients"
     }
 
-    async getOneClient(clientId: string) {
+    async createClient(firstName: string, lastName: string): Promise<number> {
+        const clientObjectToDb = {
+            first_name: firstName,
+            last_name: lastName
+        };
+        const newClient = await this.clientModel.create(clientObjectToDb);
+        const clientId = newClient.id;
+        return clientId;
+    }
+
+    async getOneClient(clientId: number) {
         const client = await this.clientModel.findByPk(clientId);
         if (!client) throw new NotFoundException('Cliente no encontrado')
         return client
@@ -31,12 +41,7 @@ export class ClientService {
             const client = clientExistsInDb;
             clientId = client.id;
         } else {
-            const clientObjectToDb = {
-                first_name,
-                last_name
-            };
-            const newClient = await this.clientModel.create(clientObjectToDb);
-            clientId = newClient.id;
+            clientId = await this.createClient(first_name, last_name)
         }
         return clientId;
     }

@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { ReadyToPickupType } from "../../work_done/types/types";
 
 
 
@@ -37,13 +38,15 @@ export class ChangeOrderStatusDto {
     
     @ApiProperty()
     @IsNotEmpty()
-    @IsString()
-    status_id: string
+    @IsNumber()
+    status_id: number
 
     @ApiProperty()
     @IsNotEmpty()
-    @IsString()
-    order_id: string
+    @IsNumber()
+    order_id: number
+
+
 
 }
 

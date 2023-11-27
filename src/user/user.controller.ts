@@ -25,11 +25,17 @@ export class UserController {
     @ApiParam({
         name: 'userId'
     })
+    
+
+    @Get('all')
+    allUsers(){
+        return this.userService.allUsers();
+    }
+
     @Get(':userId')
     oneUser(@Param() userId: string){
         return this.userService.getOneUserById(userId);
     }
-
    
 
 }

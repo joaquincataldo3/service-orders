@@ -9,8 +9,9 @@ export class UserService {
 
     constructor(@InjectModel(UserModel) private userModel: typeof UserModel) { }
 
-    allUsers() {
-        return "All users !"
+    async allUsers() {
+        const allUsers = await this.userModel.findAll();
+        return allUsers; 
     }
 
     async getOneUserByField(filter: GetUserFilterParam): Promise<GetUserFilterReturn> {
