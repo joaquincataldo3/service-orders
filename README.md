@@ -5,7 +5,7 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">API created with <a href="http://nodejs.org" target="_blank">NestJS</a> a NodeJS framework for building efficient and scalable server-side applications.</p>
+  <p align="center">API created with <strong>NestJS</strong>, a NodeJS framework for building efficient and scalable server-side applications.</p>
     <p align="center">
 
 </p>
