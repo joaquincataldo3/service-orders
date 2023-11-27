@@ -5,13 +5,20 @@ import { jwtGuardId } from "src/auth/utils/utils";
 import { UpdateCommentDto, CreateCommentDto } from "./dto/dto";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
-import { ApiParam, ApiTags } from "@nestjs/swagger";
+import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
 
 // swagger
 @ApiTags('Comment')
 
 // all routes protected by tguard
 @UseGuards(AuthGuard(jwtGuardId))
+
+//
+@ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer <token>'
+})
+
 
 // /comments prefix
 @Controller('comments')

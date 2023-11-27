@@ -5,11 +5,17 @@ import { UserModel } from "src/user/user.model";
 import { jwtGuardId } from "src/auth/utils/utils";
 import { WorkDoneService } from "./work_done.service";
 import { CreateWorkDoneDto } from "./dto/dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiHeader, ApiTags } from "@nestjs/swagger";
 
 
 //swagger
 @ApiTags('Work Done')
+
+@ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer <token>'
+})
+
 
 // protected by guard
 @UseGuards(AuthGuard(jwtGuardId))

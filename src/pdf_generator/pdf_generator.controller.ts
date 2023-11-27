@@ -4,13 +4,18 @@ import { jwtGuardId } from "src/auth/utils/utils";
 import { PdfGeneratorService } from "./pdf_generator.service";
 import { Response } from "express";
 import { GetOrderParam, GetReceiptParam } from "src/order/utils/interfaces";
-import { ApiParam, ApiTags } from "@nestjs/swagger";
+import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
 
 // swagger
 @ApiTags('Pdf')
 
 // all routes protected by guard
 @UseGuards(AuthGuard(jwtGuardId))
+
+@ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer <token>'
+})
 
 // /pdf prex
 @Controller('pdf')

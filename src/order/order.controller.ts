@@ -7,7 +7,7 @@ import { jwtGuardId } from "src/auth/utils/utils";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
 import { OrderModel } from "./order.model";
-import { ApiParam, ApiTags } from "@nestjs/swagger";
+import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
 
 
 // swagger tag Orders
@@ -15,6 +15,12 @@ import { ApiParam, ApiTags } from "@nestjs/swagger";
 
 // all routes protected by authguard
 @UseGuards(AuthGuard(jwtGuardId))
+
+@ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer <token>'
+})
+
 
 // /orders prefix
 @Controller('orders')

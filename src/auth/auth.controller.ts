@@ -6,13 +6,11 @@ import { AuthGuard } from '@nestjs/passport';
 import {Req, Res} from '@nestjs/common'
 import {Request, Response} from 'express';
 import { jwtGuardId } from './utils/utils';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiTags } from '@nestjs/swagger';
 
 // swagger 
 @ApiTags('Auth')
 
-// all routes protected by guard
-@UseGuards(AuthGuard(jwtGuardId))
 
 // /auth prefix
 @Controller('auth')
@@ -36,8 +34,12 @@ export class AuthController {
         }
        
     }
-    
-   /*  @UseGuards(AuthGuard(jwtGuardId)) */
+
+    @UseGuards(AuthGuard(jwtGuardId))
+    @ApiHeader({
+        name: 'Authorization',
+        description: 'Bearer <token>'
+    })
     @Post('sign-up') 
     @HttpCode(201)
     // nestjs tiene un decorator llamado Bdoy
