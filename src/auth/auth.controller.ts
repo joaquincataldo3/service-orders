@@ -35,7 +35,7 @@ export class AuthController {
        
     }
 
-    /* @UseGuards(AuthGuard(jwtGuardId)) */
+    @UseGuards(AuthGuard(jwtGuardId)) 
     @ApiHeader({
         name: 'Authorization',
         description: 'Bearer <token>'
