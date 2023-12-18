@@ -1,4 +1,4 @@
-import {  Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
+import { Inject, Injectable, InternalServerErrorException, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { OrderModel } from "./order.model";
 import { ChangeOrderStatusDto, CreateOrderDto } from "./dto/dto";
@@ -7,6 +7,7 @@ import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { ClientService } from "src/client/client.service";
 import { CommentService } from "src/comments/comment.service";
 import { OrderStatusesService } from "src/order_statuses/order_statuses.service";
+import { RequestSuccess } from "src/utils/global.interfaces";
 
 Injectable({})
 
@@ -18,66 +19,61 @@ export class OrderService {
             private clientService: ClientService,
             private orderStatusesService: OrderStatusesService) { }
 
-    async allOrders(orderStatus: string | ''): Promise<OrderModel[]> {
-        if (orderStatus) {
-            await this.orderStatusesService.getStatus(orderStatus);
-            return this.orderModel.findAll({
-                include: ['createdBy', 'client', 'orderStatus'],
-                where: {
-                    order_status_id: orderStatus
-                }
-            })
-        }
+            
+    async allOrders(page: number): Promise<OrderModel[]> {
+        const limit = 5;
+        const offset = limit * (page - 1);
         return this.orderModel.findAll({
             include: ['createdBy', 'client', 'orderStatus'],
+            limit,
+            offset
+        })
+    }
 
+    async allOrdersByUser(page: number, userId: number): Promise<OrderModel[]> {
+        const limit = 5;
+        const offset = limit * (page - 1);
+        return this.orderModel.findAll({
+            where: {
+                userId
+            },
+            include: ['createdBy', 'client', 'orderStatus'],
+            limit,
+            offset
         })
     }
 
     async getOrder(orderId: number) {
-        try {
-            const order: OrderModel = await this.orderModel.findByPk(orderId, {
-                include: ['createdBy', 'updatedBy', 'client']
-            });
-            console.log(order)
-            if (!order) throw new NotFoundException("Orden no encontrada")
-            return order;
-        } catch (error) {
-            console.log(error);
-            throw new InternalServerErrorException(`Error en getOrder: ${error}`);
-        }
+        const order: OrderModel = await this.orderModel.findByPk(orderId, {
+            include: ['createdBy', 'updatedBy', 'client']
+        });
+        if (!order) throw new NotFoundException("Order not found")
+        return order;
     }
 
 
     async createOrder(dto: CreateOrderDto, activeUser: UserModel) {
-        try {
-            const { entry, device, code, first_name, last_name } = dto;
-            const { id } = activeUser;
-            const clientId: number = await this.clientService.getClientId(first_name, last_name)
-            const orderObjectToDb = {
-                entry,
-                device,
-                code,
-                client_id: clientId,
-                created_by_id: id,
-                order_status_id: 1,
-                createdAt: Date.now(),
-                updatedAt: null,
-                deletedAt: null
-            }
-            const newOrder = await this.orderModel.create(orderObjectToDb);
-            return newOrder;
-        } catch (error) {
-            console.log('Error creando una orden: ' + error)
-            throw new InternalServerErrorException('Error creando una orden')
+        const { entry, device, code, first_name, last_name } = dto;
+        const { id } = activeUser;
+        const clientId: number = await this.clientService.getClientId(first_name, last_name)
+        const orderObjectToDb = {
+            entry,
+            device,
+            code,
+            client_id: clientId,
+            created_by_id: id,
+            order_status_id: 1,
+            createdAt: Date.now(),
+            updatedAt: null,
+            deletedAt: null
         }
-
+        const newOrder = await this.orderModel.create(orderObjectToDb);
+        return newOrder;
     }
 
-    async changeOrderStatus(dto: ChangeOrderStatusDto, userId: number) {
+    async changeOrderStatus(dto: ChangeOrderStatusDto, userId: number): Promise<RequestSuccess> {
         const { status_id, order_id } = dto;
-        const statusIdStr = status_id.toString()
-        const selectedStatus = await this.orderStatusesService.getStatus(statusIdStr);
+        const selectedStatus = await this.orderStatusesService.getStatus(status_id);
         const [affectedCount] = await this.orderModel.update({
             order_status_id: status_id
         }, {
@@ -85,32 +81,42 @@ export class OrderService {
                 id: order_id
             }
         })
-        if (affectedCount == 0) throw new NotFoundException('No se actualizó ningún dato de la orden')
-        const createCommentDto = { 
-                description: `Estado de orden cambiado a ${selectedStatus.status}`,
-                order_id: Number(order_id) }
+        if (affectedCount == 0) throw new NotFoundException(`No data was updated with the id: ${order_id}`);
+        const createCommentDto = {
+            description: `Estado de orden cambiado a ${selectedStatus.status}`,
+            order_id: Number(order_id)
+        }
         await this.commentService.createComment(createCommentDto, userId)
-        return true;
+        return { ok: true };
     }
 
     async updateDateOfUpdate(orderId: number, @GetUserDecorator() userId: number): Promise<boolean> {
-        const currentDate = new Date();
+        try {
+            const currentDate = new Date();
 
-        const [affectedCount] = await this.orderModel.update(
-            {
-              updatedAt: currentDate,
-              last_updated_by_id: userId
-            },
-            {
-              where: {
-                id: orderId
-              }
+            const [affectedCount] = await this.orderModel.update(
+                {
+                    updatedAt: currentDate,
+                    last_updated_by_id: userId
+                },
+                {
+                    where: {
+                        id: orderId
+                    }
+                }
+            );
+            if (affectedCount === 0) {
+                throw new NotFoundException(`No data was updated with id: ${userId}`);
             }
-        );
-        if(affectedCount === 0) {
-            throw new NotFoundException("No se actualizó ningún dato de la orden");
+            return true;
+        } catch (error) {
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+
+            throw new InternalServerErrorException(`Error in updateDateOfUpdate: ${error}`);
         }
-        return true;
+
     }
 
 }

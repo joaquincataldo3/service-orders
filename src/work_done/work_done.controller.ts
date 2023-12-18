@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Param, Post, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, InternalServerErrorException, Param, Post, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
@@ -25,13 +25,18 @@ import { ApiHeader, ApiTags } from "@nestjs/swagger";
 
 export class WorkDoneController {
 
-    constructor(private workDoneService: WorkDoneService) {}
+    constructor(private workDoneService: WorkDoneService) { }
 
     @Post('create')
     @HttpCode(201)
-    createWorkDone(@GetUserDecorator() user: UserModel, @Body() dto: CreateWorkDoneDto){
-        const userId = user.id;
-        return this.workDoneService.createWorkDone(userId, dto);
+    createWorkDone(@GetUserDecorator() user: UserModel, @Body() dto: CreateWorkDoneDto) {
+        try {
+            const userId = user.id;
+            return this.workDoneService.createWorkDone(userId, dto);
+        } catch (error) {
+            throw new InternalServerErrorException();
+        }
+
     }
 
 }

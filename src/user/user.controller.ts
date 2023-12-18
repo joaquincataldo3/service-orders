@@ -1,7 +1,8 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from "@nestjs/common";
+import { Controller, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
+import { userIdParam } from "src/utils/global.constants";
 
 //swagger
 @ApiTags('Users')
@@ -22,19 +23,26 @@ export class UserController {
 
     constructor (private userService: UserService) {}
     
-    @ApiParam({
-        name: 'userId'
-    })
-    
-
+ 
     @Get('all')
     allUsers(){
         return this.userService.allUsers();
     }
 
-    @Get(':userId')
-    oneUser(@Param() userId: string){
-        return this.userService.getOneUserById(userId);
+    @ApiParam({
+        name: userIdParam
+    })
+    @Get(`:${userIdParam}`)
+    oneUser(@Param(userIdParam, ParseIntPipe) userId: string){
+        try {
+            return this.userService.getOneUserById(userId);
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new InternalServerErrorException();
+        }
+        
     }
    
 

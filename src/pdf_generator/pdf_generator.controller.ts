@@ -1,10 +1,10 @@
-import { Controller, Get, Param, Res, UseGuards } from "@nestjs/common";
+import { Controller, Get, InternalServerErrorException, Param, ParseIntPipe, Res, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { jwtGuardId } from "src/auth/utils/utils";
 import { PdfGeneratorService } from "./pdf_generator.service";
 import { Response } from "express";
-import { GetOrderParam, GetReceiptParam } from "src/order/utils/interfaces";
 import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
+import { orderIdParam, receiptIdParam } from "src/utils/global.constants";
 
 // swagger
 @ApiTags('Pdf')
@@ -23,30 +23,37 @@ import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
 export class PdfGeneratorController {
 
     constructor(private pdfGenService: PdfGeneratorService) { }
-    
-    
-    @ApiParam({
-        name: "orderId"
-    })
-    @Get('order/:orderId')
-    async createOrderPdf(@Param() orderId: number, @Res() res: Response): Promise<void> {
-        const pdfBuffer = await this.pdfGenService.createOrderPdf(orderId);
 
-        res.setHeader('Content-Type', 'application/pdf');
-        res.send(pdfBuffer);
+
+    @ApiParam({
+        name: orderIdParam
+    })
+    @Get(`order/:${orderIdParam}`)
+    async createOrderPdf(@Param(orderIdParam, ParseIntPipe) orderId: number, @Res() res: Response): Promise<void> {
+        try {
+            const pdfBuffer = await this.pdfGenService.createOrderPdf(orderId);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.send(pdfBuffer);
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+
     }
 
 
     @ApiParam({
-        name: "receiptId"
+        name: receiptIdParam
     })
-    @Get('receipt/:receiptId')
-    async createReceiptPdf(@Param() params: GetReceiptParam, @Res() res: Response): Promise<void>{
-        const receiptIdParams = Number(params.receiptId);
-        const pdfBuffer = await this.pdfGenService.createReceiptPdf(receiptIdParams);
-
-        res.setHeader('Content-Type', 'application/pdf');
-        res.send(pdfBuffer);
+    @Get(`receipt/:${receiptIdParam}`)
+    async createReceiptPdf(@Param(receiptIdParam, ParseIntPipe) receiptId: number, @Res() res: Response): Promise<void> {
+        try {
+            const pdfBuffer = await this.pdfGenService.createReceiptPdf(receiptId);
+            res.setHeader('Content-Type', 'application/pdf');
+            res.send(pdfBuffer);
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+       
     }
 
 }

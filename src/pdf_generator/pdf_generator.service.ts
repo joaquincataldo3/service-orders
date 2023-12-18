@@ -1,6 +1,6 @@
 
 
-import { Injectable } from "@nestjs/common";
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { OrderService } from "src/order/order.service";
 import { Response } from "express";
 import { ClientService } from "src/client/client.service";
@@ -18,17 +18,22 @@ export class PdfGeneratorService {
     constructor(private orderService: OrderService, private receiptService: ReceiptService) { }
 
     async createBufferPdf(content: string): Promise<Buffer> {
+        try {
+            const browser = await puppeteer.launch();
+            const page = await browser.newPage();
 
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
+            await page.setContent(content);
 
-        await page.setContent(content);
+            const buffer = await page.pdf({ path: createOrderPdfOutputhPath, format: 'A4' });
 
-        const buffer = await page.pdf({ path: createOrderPdfOutputhPath, format: 'A4' });
+            await browser.close();
 
-        await browser.close();
+            return buffer;
+        } catch (error) {
+            throw new InternalServerErrorException(`Error in createBufferPdf: ${error}`);
+        }
 
-        return buffer;
+
     }
 
     injectReceiptContent(receiptDataContent: InjectReceiptDataContent): string {
@@ -52,7 +57,8 @@ export class PdfGeneratorService {
                     ${phoneNumbers.map((order, i) => {
             if (i < phoneNumbers.length - 1) {
                 return `<li>*${order}</li>`
-            }}).join('')}
+            }
+        }).join('')}
                     </ul>
                     <ul class="order-data-container">
                         <li class="data-li"><span class="li-pre">Recibo #:</span> ${id}</li>
@@ -110,7 +116,8 @@ export class PdfGeneratorService {
                     ${phoneNumbers.map((order, i) => {
             if (i < phoneNumbers.length - 1) {
                 return `<li class="data-li">*${order}</li>`
-            }}).join('')}
+            }
+        }).join('')}
                     </ul>
                     <ul class="order-data-container">
                         <li class="data-li"><span class="li-pre">Orden #:</span> ${id}</li>
@@ -171,13 +178,10 @@ export class PdfGeneratorService {
             createdAt: receipt.createdAt,
             paymentMethod: receipt.paymentMethod.method
         };
-
         const htmlCode = this.injectReceiptContent(receiptContent);
         const content = `<html><head><style>${cssMark}</style></head><body>${htmlCode}</body></html > `;
         const buffer = this.createBufferPdf(content);
-
         return buffer;
-
     }
 
     async createOrderPdf(orderId: number): Promise<Buffer> {
@@ -193,13 +197,9 @@ export class PdfGeneratorService {
             lastName: order.client.last_name,
             user: order.createdBy.username
         }
-
         const htmlCode = this.injectOrderContent(orderContent);
-
         const content = `<html><head><style>${cssMark}</style></head><body>${htmlCode}</body></html > `;
-
         const buffer = this.createBufferPdf(content);
-
         return buffer;
     }
 

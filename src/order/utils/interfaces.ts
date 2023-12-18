@@ -1,10 +1,4 @@
-export interface GetOrderParam {
-    orderId: string
-}
 
-export interface GetReceiptParam {
-    receiptId: string
-}
 
 export interface OrderPopulated {
     id: string,

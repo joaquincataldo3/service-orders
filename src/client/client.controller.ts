@@ -1,9 +1,9 @@
-import { Controller, Get, Param, UseGuards } from "@nestjs/common";
+import { Controller, Get, InternalServerErrorException, NotFoundException, Param, ParseIntPipe, UseGuards } from "@nestjs/common";
 import { ClientService } from "./client.service";
 import { AuthGuard } from "@nestjs/passport";
 import { jwtGuardId } from "src/auth/utils/utils";
 import { ApiParam, ApiTags } from "@nestjs/swagger";
-import { GetClientParams } from "./interfaces/interfaces";
+import { clientIdParam } from "src/utils/global.constants";
 
 @ApiTags('Clients')
 
@@ -15,23 +15,36 @@ import { GetClientParams } from "./interfaces/interfaces";
 
 export class ClientController {
 
-    constructor (private clientService: ClientService) {}
+    constructor(private clientService: ClientService) { }
 
-  
+
     @Get('all')
     allClients() {
-        return this.clientService.allClients()
+        try {
+            return this.clientService.allClients()
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+
     }
 
     @ApiParam({
-        name: 'clientId'
+        name: clientIdParam
     })
-    @Get('one/:clientId')
-    oneClient(@Param() params: GetClientParams) {
-        const clientIdParams = Number(params.clientId);
-        return this.clientService.getOneClient(clientIdParams)
+    @Get(`one/:${clientIdParam}`)
+    oneClient(@Param(clientIdParam, ParseIntPipe) clientId: number) {
+        try {
+            const clientIdParams = Number(clientId);
+            return this.clientService.getOneClient(clientIdParams)
+        } catch (error) {
+            if(error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new InternalServerErrorException()
+        }
+
     }
 
-    
+
 
 }
