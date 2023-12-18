@@ -8,7 +8,7 @@ import { UserModel } from "src/user/user.model";
 import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
 import { CommentModel } from "./comment.model";
 import { RequestSuccess } from "src/utils/global.interfaces";
-import { authorizationTokenSwagger } from "src/utils/global.constants";
+import { authorizationTokenSwagger, commentIdParam, userIdParam } from "src/utils/global.constants";
 
 // swagger
 @ApiTags('Comment')
@@ -28,10 +28,10 @@ export class CommentController {
     constructor(private commentService: CommentService){}
 
     @ApiParam({
-        name: 'userId'
+        name: userIdParam
     })
-    @Get('all/:userId')
-    async getAllComments(@Param('userId', ParseIntPipe) userId: number): Promise<CommentModel[]>{
+    @Get(`all/:${userIdParam}`)
+    async getAllComments(@Param(userIdParam, ParseIntPipe) userId: number): Promise<CommentModel[]>{
         try {
             const comments = await this.commentService.getAllCommentsByUser(userId);
             return comments;
@@ -54,10 +54,10 @@ export class CommentController {
     
     
     @ApiParam({
-        name: 'commentId'
+        name: commentIdParam
     })
-    @Put('update/:commentId')
-    async updateComment(@Param('commentId', ParseIntPipe) commentId: number, @Body() dto: UpdateCommentDto) {
+    @Put(`update/:${commentIdParam}`)
+    async updateComment(@Param(commentIdParam, ParseIntPipe) commentId: number, @Body() dto: UpdateCommentDto) {
         try {
             await this.commentService.updateComment(commentId, dto);
         } catch (error) {
