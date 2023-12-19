@@ -32,7 +32,7 @@ export class UserService {
         }
     }
 
-    async getOneUserById(userId: string): Promise<UserModel> {
+    async getOneUserById(userId: number): Promise<UserModel> {
         const userWithFilter = await this.userModel.findByPk(userId);
         if (!userWithFilter) throw new NotFoundException(`No user was found with id: ${userId}`)
         return userWithFilter;

@@ -1,10 +1,11 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { UserModel } from "src/user/user.model";
-import { CreateWorkDoneDto } from "./dto/dto";
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateWorkDoneDto, UpdateWorkDoneDto } from "./dto/dto";
 import { WorkDoneModel } from "./work_done.model";
 import { InjectModel } from "@nestjs/sequelize";
 import { OrderService } from "src/order/order.service";
 import { ChangeOrderStatusDto } from "src/order/dto/dto";
+import { UserService } from "src/user/user.service";
+import { RequestSuccess } from "src/utils/global.interfaces";
 
 @Injectable({})
 
@@ -12,10 +13,21 @@ export class WorkDoneService {
 
     constructor(
         @InjectModel(WorkDoneModel) private workDoneModel: typeof WorkDoneModel,
-        private orderService: OrderService
+        private orderService: OrderService,
+        private usersService: UserService
     ) { }
 
-    async createWorkDone(userId: number, dto: CreateWorkDoneDto) {
+    async getWorksDoneByUser(userId: number) {
+        await this.usersService.getOneUserById(userId);
+        const worksDone = await this.workDoneModel.findAll({
+            where: {
+                user_id: userId
+            }
+        })
+        return worksDone;
+    }
+
+    async createWorkDone(userId: number, dto: CreateWorkDoneDto): Promise<WorkDoneModel> {
         const { description, orderId, isReadyToPickUp } = dto;
         const workDoneObject = {
             description,
@@ -33,6 +45,19 @@ export class WorkDoneService {
         }
         const workDone = await this.workDoneModel.create(workDoneObject);
         return workDone;
+    }
+
+    async updateWorkDone(dto: UpdateWorkDoneDto): Promise<RequestSuccess> {
+        const { description, workDoneId} = dto;
+        const [affectedCount] = await this.workDoneModel.update({ description, edited: 1}, {
+            where: {
+                id: workDoneId
+            }
+        });
+        if (affectedCount === 0) {
+            throw new NotFoundException('No record was updated');
+        }
+        return { ok: true }
     }
 
 }

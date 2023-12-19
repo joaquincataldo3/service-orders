@@ -33,7 +33,7 @@ export class UserController {
         name: userIdParam
     })
     @Get(`:${userIdParam}`)
-    oneUser(@Param(userIdParam, ParseIntPipe) userId: string){
+    oneUser(@Param(userIdParam, ParseIntPipe) userId: number){
         try {
             return this.userService.getOneUserById(userId);
         } catch (error) {
