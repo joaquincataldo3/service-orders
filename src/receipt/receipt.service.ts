@@ -19,7 +19,7 @@ export class ReceiptService {
         const whereClause = userId ? { userId } : {};
         return this.receiptModel.findAll({
             where: whereClause,
-            include: ['createdBy', 'client', 'orderStatus', 'updatedBy', 'paymentMethod', 'guaranteeTime'],
+            include: ['createdBy', 'client', 'paymentMethod', 'guaranteeTime'],
             limit,
             offset
         });
@@ -27,7 +27,7 @@ export class ReceiptService {
 
     async getOneReceipt(receiptId: number) {
         const receipt = await this.receiptModel.findByPk(receiptId, {
-            include: ['createdBy', 'client', 'orderStatus', 'updatedBy', 'paymentMethod', 'guaranteeTime']
+            include: ['createdBy', 'client', 'guaranteeTime', 'paymentMethod']
         });
         if (!receipt) throw new NotFoundException('Receipt not found');
         return receipt;

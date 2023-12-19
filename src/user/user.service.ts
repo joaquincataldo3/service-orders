@@ -24,7 +24,11 @@ export class UserService {
             const { field, value } = filter;
             let where = {}
             where[field.toLowerCase()] = value.toLowerCase();
-            const userWithFilter = await this.userModel.findOne({ where })
+            console.log(where[field]);;
+            const userWithFilter = await this.userModel.findOne({ where: {
+                email: value
+            } });
+            console.log(userWithFilter)
             if (!userWithFilter) return { ok: false, user: undefined }
             return { ok: true, user: userWithFilter };
         } catch (error) {

@@ -42,7 +42,7 @@ export class AuthController {
         }   
     }
 
-    @UseGuards(AuthGuard(jwtGuardId)) 
+   /*  @UseGuards(AuthGuard(jwtGuardId))  */
     @ApiHeader(authorizationTokenSwagger)
     @Post('sign-up') 
     @HttpCode(201)
@@ -53,6 +53,7 @@ export class AuthController {
             if (error instanceof ConflictException) {
                 throw error;
             }
+            console.log(error);
             throw new InternalServerErrorException()
         }
         

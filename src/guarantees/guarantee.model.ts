@@ -13,7 +13,7 @@ export class GuaranteeModel extends Model {
     @Column({type: DataType.STRING(255)})
     description: string
 
-    @BelongsTo(() => ReceiptModel, {foreignKey: 'guarantee_id', as: 'receipt'})
+    @HasMany(() => ReceiptModel, {foreignKey: 'guarantee_id', as: 'receipt'})
     receipt: ReceiptModel[]
     
 }

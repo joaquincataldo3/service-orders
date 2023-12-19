@@ -13,7 +13,7 @@ export class PaymentMethodModel extends Model {
     @Column({type: DataType.TEXT})
     method: string
 
-    @BelongsTo(() => ReceiptModel, {foreignKey: 'guarantee_id', as: 'receipt'})
+    @HasMany(() => ReceiptModel, {foreignKey: 'guarantee_id', as: 'receipt'})
     receipt: ReceiptModel[]
     
 }

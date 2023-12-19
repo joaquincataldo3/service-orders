@@ -7,16 +7,13 @@ import { WorkDoneService } from "./work_done.service";
 import { CreateWorkDoneDto, UpdateWorkDoneDto } from "./dto/dto";
 import { ApiHeader, ApiTags } from "@nestjs/swagger";
 import { WorkDoneModel } from "./work_done.model";
-import { userIdParam } from "src/utils/global.constants";
+import { authorizationTokenSwagger, userIdParam } from "src/utils/global.constants";
 
 
 //swagger
 @ApiTags('Work Done')
 
-@ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer <token>'
-})
+@ApiHeader(authorizationTokenSwagger)
 
 
 // protected by guard

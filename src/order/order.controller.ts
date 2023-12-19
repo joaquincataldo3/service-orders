@@ -83,6 +83,7 @@ export class OrderController {
         try {
             return await this.orderService.createOrder(dto, user);
         } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException()
         }
 

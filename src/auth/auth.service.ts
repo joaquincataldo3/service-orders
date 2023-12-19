@@ -49,14 +49,14 @@ export class AuthService {
         const { email, password } = dto
         const isEmailInDb = await this.userService.getOneUserByField({ field: 'email', value: email });
         if (!isEmailInDb.ok) {
-            throw new ForbiddenException('Invalid credentials');
+            throw new ForbiddenException('Email');
         }
         const user = isEmailInDb.user;
         const bodyPassword = password.toLowerCase();
         const userInDbPassword = user.password;
         const pwMatches: boolean = await compare(bodyPassword, userInDbPassword);
         if (!pwMatches) {
-            throw new ForbiddenException('Invalid credentials')
+            throw new ForbiddenException('password')
         };
         const { id } = user;
         const token = await this.signToken(id, email, password);

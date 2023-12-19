@@ -63,10 +63,11 @@ body {
 }
 
 .data-li {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     display: flex;
-    align-items: center;
-    margin-top: 16px;
+    flex-direction: column;
+    
+    margin-top: 30px;
 }
 
 
@@ -76,7 +77,7 @@ body {
     border-radius: 5px;
     width: 50%;
     padding: 2% 0% 2% 1%;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
 }
 
 .data-li-title {
@@ -87,6 +88,7 @@ body {
 .client-data-li p:last-child {
     margin-top: 2%;
 }
+
 
 .general-conditions {
     margin-top: 3%;

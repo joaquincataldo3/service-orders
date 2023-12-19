@@ -4,7 +4,7 @@ import { jwtGuardId } from "src/auth/utils/utils";
 import { PdfGeneratorService } from "./pdf_generator.service";
 import { Response } from "express";
 import { ApiHeader, ApiParam, ApiTags } from "@nestjs/swagger";
-import { orderIdParam, receiptIdParam } from "src/utils/global.constants";
+import { authorizationTokenSwagger, orderIdParam, receiptIdParam } from "src/utils/global.constants";
 
 // swagger
 @ApiTags('Pdf')
@@ -12,10 +12,7 @@ import { orderIdParam, receiptIdParam } from "src/utils/global.constants";
 // all routes protected by guard
 @UseGuards(AuthGuard(jwtGuardId))
 
-@ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer <token>'
-})
+@ApiHeader(authorizationTokenSwagger)
 
 // /pdf prex
 @Controller('pdf')
@@ -51,6 +48,7 @@ export class PdfGeneratorController {
             res.setHeader('Content-Type', 'application/pdf');
             res.send(pdfBuffer);
         } catch (error) {
+            console.log(error);
             throw new InternalServerErrorException()
         }
        

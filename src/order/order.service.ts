@@ -55,10 +55,11 @@ export class OrderService {
     async createOrder(dto: CreateOrderDto, activeUser: UserModel) {
         const { entry, device, code, first_name, last_name } = dto;
         const { id } = activeUser;
+        const deviceLower = device.toLowerCase();
         const clientId: number = await this.clientService.getClientId(first_name, last_name)
         const orderObjectToDb = {
             entry,
-            device,
+            device: deviceLower,
             code,
             client_id: clientId,
             created_by_id: id,

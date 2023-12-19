@@ -47,6 +47,7 @@ export class CommentController {
             const userId = user.id;
             return await this.commentService.createComment(dto, userId);
         } catch (error) {
+            console.log(error)
             throw new InternalServerErrorException()
         }
         

@@ -17,8 +17,8 @@ export class ClientService {
     async createClient(firstName: string, lastName: string): Promise<number> {
         try {
             const clientObjectToDb = {
-                first_name: firstName,
-                last_name: lastName
+                first_name: firstName.toLowerCase(),
+                last_name: lastName.toLowerCase()
             };
             const newClient = await this.clientModel.create(clientObjectToDb);
             const clientId = newClient.id;
@@ -37,10 +37,12 @@ export class ClientService {
 
     async getClientId(first_name: string, last_name: string): Promise<number> {
         try {
+            const firstNameLower = first_name.toLowerCase();
+            const lastNameLower = last_name.toLowerCase();
             const clientExistsInDb = await this.clientModel.findOne({
                 where: {
-                    first_name,
-                    last_name
+                    first_name: firstNameLower,
+                    last_name: lastNameLower
                 }
             })
             let clientId: number;

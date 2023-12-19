@@ -10,12 +10,15 @@ import { cssMark } from "./utils/template";
 import { InjectOrderDataContent, InjectReceiptDataContent } from "./utils/interfaces";
 import { formatDate } from "src/utils/dateFormatter";
 import { ReceiptService } from "src/receipt/receipt.service";
+import { ReceiptModel } from "src/receipt/receipt.model";
 
 @Injectable({})
 
 export class PdfGeneratorService {
 
     constructor(private orderService: OrderService, private receiptService: ReceiptService) { }
+
+    
 
     async createBufferPdf(content: string): Promise<Buffer> {
         try {
@@ -56,7 +59,7 @@ export class PdfGeneratorService {
                     <ul class="phone-numbers-container">
                     ${phoneNumbers.map((order, i) => {
             if (i < phoneNumbers.length - 1) {
-                return `<li>*${order}</li>`
+                return `<li>${order}</li>`
             }
         }).join('')}
                     </ul>
@@ -65,9 +68,6 @@ export class PdfGeneratorService {
                         <li class="data-li"><span class="li-pre">Día:</span> ${formattedDate}</li>
                         <li class="data-li"><span class="li-pre">Creada por:</span> ${user}</li>
                     </ul>
-                </div>
-                <div class="line-img-container">
-                    <img src="https://localhost:3333/src/pdf_generator/assets/horizontal-line.png" alt="linearecta-removebg-preview.png"/>
                 </div>
                 <ul class="client-data-container">
                     <li class="client-data-li">
@@ -115,7 +115,7 @@ export class PdfGeneratorService {
                     <ul class="phone-numbers-container">
                     ${phoneNumbers.map((order, i) => {
             if (i < phoneNumbers.length - 1) {
-                return `<li class="data-li">*${order}</li>`
+                return `<li class="data-li">${order}</li>`
             }
         }).join('')}
                     </ul>
@@ -125,17 +125,14 @@ export class PdfGeneratorService {
                         <li class="data-li"><span class="li-pre">Creada por:</span> ${user}</li>
                     </ul>
                 </div>
-                <div class="line-img-container">
-                    <img src="https://imageupload.io/ib/zWCGWAtnnWVwbSo_1699467226.png" alt="linearecta-removebg-preview.png"/>
-                </div>
                 <ul class="client-data-container">
                     <li class="client-data-li">
                         <p class="data-li-title">Nombre y apellido:</p>
-                        <p>${firstName} ${lastName}</p>
+                        <p>${firstName.toUpperCase()} ${lastName.toUpperCase()}</p>
                     </li>
                     <li class="client-data-li">
                         <p class="data-li-title">Equipo:</p>
-                        <p>${device}</p>
+                        <p>${device.toUpperCase()}</p>
                     </li>
                     <li class="client-data-li">
                         <p class="data-li-title">Código:</p>
@@ -146,9 +143,6 @@ export class PdfGeneratorService {
                         <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde aperiam rerum perferendis saepe nobis sequi quisquam dignissimos pariatur fuga repudiandae cumque sed vitae deserunt tempore sunt, animi ducimus recusandae quos.</p>
                     </li>
                 </ul>
-                <div class="line-img-container">
-                    <img src="https://imageupload.io/ib/zWCGWAtnnWVwbSo_1699467226.png" alt="linearecta-removebg-preview.png"/>
-                </div>
                 <div class="general-conditions">
                     <h2>Condiciones generales</h2>
                     <ul class="general-conditions-ul">
@@ -181,6 +175,7 @@ export class PdfGeneratorService {
         const htmlCode = this.injectReceiptContent(receiptContent);
         const content = `<html><head><style>${cssMark}</style></head><body>${htmlCode}</body></html > `;
         const buffer = this.createBufferPdf(content);
+        console.log(buffer);
         return buffer;
     }
 
