@@ -13,6 +13,7 @@ import { GuaranteeModule } from './guarantees/guarantee.module';
 import { ReceiptModule } from './receipt/receipt.module';
 import { PaymentMethodModule } from './payment_methods/payment_methods.module';
 import { PdfGeneratorModule } from './pdf_generator/pdf_generator.module';
+import { WelcomeModule } from './welcome/welcome.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PdfGeneratorModule } from './pdf_generator/pdf_generator.module';
     ReceiptModule,
     PaymentMethodModule,
     PdfGeneratorModule,
+    WelcomeModule,
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
