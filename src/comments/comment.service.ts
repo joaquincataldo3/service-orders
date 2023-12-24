@@ -16,13 +16,14 @@ export class CommentService {
         @InjectModel(CommentModel) private commentModel: typeof CommentModel,
         @Inject(forwardRef(() => OrderService)) private orderService: OrderService) { }
 
+    private commentsRelations: string[] = ['user', 'order']
 
     async getAllCommentsByUser(userId: number): Promise<CommentModel[]> {
         const comments = await this.commentModel.findAll({
             where: {
                 user_id: userId
             },
-            include: ['user, order']
+            include: this.commentsRelations
         });
         return comments;
     }

@@ -19,33 +19,37 @@ export class OrderService {
             private clientService: ClientService,
             private orderStatusesService: OrderStatusesService) { }
 
+    private orderRelations: string[] = ['createdBy', 'client', 'orderStatus', 'updatedBy']
             
+
     async allOrders(page: number): Promise<OrderModel[]> {
         const limit = 5;
         const offset = limit * (page - 1);
         return this.orderModel.findAll({
-            include: ['createdBy', 'client', 'orderStatus'],
+            include: this.orderRelations,
             limit,
             offset
         })
     }
 
-    async allOrdersByUser(page: number, userId: number): Promise<OrderModel[]> {
+    async allOrdersByUser(page: number, userId: string): Promise<OrderModel[]> {
         const limit = 5;
         const offset = limit * (page - 1);
+        console.log(userId)
         return this.orderModel.findAll({
             where: {
-                userId
+                created_by_id: userId
             },
-            include: ['createdBy', 'client', 'orderStatus'],
+            include: this.orderRelations,
             limit,
             offset
         })
     }
+
 
     async getOrder(orderId: number) {
         const order: OrderModel = await this.orderModel.findByPk(orderId, {
-            include: ['createdBy', 'updatedBy', 'client']
+            include: this.orderRelations
         });
         if (!order) throw new NotFoundException("Order not found")
         return order;

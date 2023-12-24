@@ -9,7 +9,7 @@ import { UserModel } from "src/user/user.model";
 import { OrderModel } from "./order.model";
 import { ApiHeader, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { RequestSuccess } from "src/utils/global.interfaces";
-import { authorizationTokenSwagger, clientIdParam, orderIdParam, pageQuery } from "src/utils/global.constants";
+import { authorizationTokenSwagger, clientIdParam, orderIdParam, pageQuery, userIdParam } from "src/utils/global.constants";
 
 
 // swagger tag Orders
@@ -28,41 +28,31 @@ export class OrderController {
 
     constructor(private orderService: OrderService) { }
 
-    @ApiQuery({
-        name: pageQuery
-    })
+    
     @Get('all')
-    async allOrders(@Query(pageQuery, ParseIntPipe) page: number): Promise<OrderModel[]> {
+    async allOrders(@Query(pageQuery, ParseIntPipe) page: number): Promise<OrderModel[]>{
         try {
             return await this.orderService.allOrders(page);
         } catch (error) {
             throw new InternalServerErrorException();
         }
-
     }
 
-    @ApiParam({
-        name: clientIdParam
-    })
-    @ApiQuery({
-        name: pageQuery
-    })
-    @Get(`/:${clientIdParam}`)
-    async allOrdersByUser(@Param(clientIdParam, ParseIntPipe) clientId: number, @Query(pageQuery) page: number): Promise<OrderModel[]> {
+    @Get(`all/:${userIdParam}`)
+    async allOrdersByUser(@Param(userIdParam, ParseIntPipe) userId: string, @Query(pageQuery, ParseIntPipe) page: number): Promise<OrderModel[]> {
         try {
-            return await this.orderService.allOrdersByUser(page, clientId);
+            return await this.orderService.allOrdersByUser(page, userId);
         } catch (error) {
-            if (error instanceof NotFoundException) {
-                throw error;
-            }
-            throw new InternalServerErrorException()
+            console.log(error);
+            throw new InternalServerErrorException();
         }
     }
+
 
     @ApiParam({
         name: orderIdParam
     })
-    @Get(`/:${orderIdParam}`)
+    @Get(`one/:${orderIdParam}`)
     async getOrder(@Param(orderIdParam, ParseIntPipe) orderId: number): Promise<OrderModel> {
         try {
             return await this.orderService.getOrder(orderId);

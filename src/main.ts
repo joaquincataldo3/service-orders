@@ -16,7 +16,7 @@ async function bootstrap() {
     .setTitle('Service Orders API')
     .setDescription('Application to manage service orders')
     .setVersion('1.0')
-    /* .addTag('service_orders') */
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);

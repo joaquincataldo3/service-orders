@@ -15,7 +15,6 @@ import { authorizationTokenSwagger, userIdParam } from "src/utils/global.constan
 
 @ApiHeader(authorizationTokenSwagger)
 
-
 // protected by guard
 @UseGuards(AuthGuard(jwtGuardId))
 

@@ -11,15 +11,28 @@ export class ReceiptService {
 
     constructor(@InjectModel(ReceiptModel)
     private receiptModel: typeof ReceiptModel,
-        private clientService: ClientService) { }
+    private clientService: ClientService) { }
 
-    async getAllReceipts(page: number, userId?: number): Promise<ReceiptModel[]> {
+    private receiptRelations: string[] = ['createdBy', 'client', 'paymentMethod', 'guaranteeTime']
+
+    async getAllReceipts(page: number): Promise<ReceiptModel[]> {
         const limit = 5;
         const offset = limit * (page - 1);
-        const whereClause = userId ? { userId } : {};
+        return this.receiptModel.findAll({
+            include: this.receiptRelations,
+            limit,
+            offset
+        });
+    }
+
+
+    async getAllReceiptsByUser(page: number, userId?: number): Promise<ReceiptModel[]> {
+        const limit = 5;
+        const offset = limit * (page - 1);
+        const whereClause = userId ? { user_id: userId } : {};
         return this.receiptModel.findAll({
             where: whereClause,
-            include: ['createdBy', 'client', 'paymentMethod', 'guaranteeTime'],
+            include: this.receiptRelations,
             limit,
             offset
         });

@@ -8,16 +8,14 @@ import { GetUserDecorator } from "src/user/custom-decorators/getUser";
 import { UserModel } from "src/user/user.model";
 import { ApiTags, ApiParam, ApiHeader, ApiQuery } from "@nestjs/swagger";
 import { GetReceiptParams } from "./interfaces/interfaces";
+import { authorizationTokenSwagger, pageQuery, receiptIdParam, userIdParam } from "src/utils/global.constants";
 
 @ApiTags('Receipts')
 
 // routes protected by guard
 @UseGuards(AuthGuard(jwtGuardId))
 
-@ApiHeader({
-    name: 'Authorization',
-    description: 'Bearer <token>'
-})
+@ApiHeader(authorizationTokenSwagger)
 
 // /receipts prefix
 @Controller('receipts')
@@ -26,16 +24,27 @@ export class ReceiptController {
 
     constructor(private receiptService: ReceiptService) { }
 
+    @Get('all')
+    async getAllReceipts(@Query(pageQuery, ParseIntPipe) page: number): Promise<ReceiptModel[]> {
+        try {
+            return await this.receiptService.getAllReceipts(page)
+        } catch (error) {
+            throw new InternalServerErrorException()
+        }
+    }
+
     @ApiQuery({
-        name: 'p'
+        name: pageQuery
     })
     @ApiParam({
-        name: 'userId'
+        name: userIdParam,
+        required: false,
+        description: 'If not provided, will return all orders'
     })
-    @Get('all/:userId')
-    async getAllReceipts(@Query('p', ParseIntPipe) page: number, @Param('userId', ParseIntPipe) userId?: number): Promise<ReceiptModel[]> {
+    @Get(`all/:${userIdParam}`)
+    async getAllReceiptsByUser(@Query(pageQuery, ParseIntPipe) page: number, @Param(userIdParam, ParseIntPipe) userId?: number): Promise<ReceiptModel[]> {
         try {
-            return await this.receiptService.getAllReceipts(page, userId);
+            return await this.receiptService.getAllReceiptsByUser(page, userId);
         } catch (error) {
             throw new InternalServerErrorException()
         }
@@ -43,9 +52,9 @@ export class ReceiptController {
     }
 
     @ApiParam({
-        name: 'receiptId'
+        name: receiptIdParam
     })
-    @Get(':receiptId')
+    @Get(`one/:${receiptIdParam}`)
     async getOneReceipt(@Param() params: GetReceiptParams): Promise<ReceiptModel> {
         try {
             const receiptIdParams = Number(params.receiptId);
@@ -70,9 +79,9 @@ export class ReceiptController {
     }
 
     @ApiParam({
-        name: 'receiptId'
+        name: receiptIdParam
     })
-    @Put('update/:receiptId')
+    @Put(`update/:${receiptIdParam}`)
     async updateOneReceipt(@Param() receiptId: string, @Body() updateReceiptDto: CreateReceiptDto, @GetUserDecorator() activeUser: UserModel) {
         try {
             return this.updateOneReceipt(receiptId, updateReceiptDto, activeUser);
