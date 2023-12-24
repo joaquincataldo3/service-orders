@@ -24,6 +24,9 @@ export class ReceiptController {
 
     constructor(private receiptService: ReceiptService) { }
 
+    @ApiQuery({
+        name: pageQuery
+    })
     @Get('all')
     async getAllReceipts(@Query(pageQuery, ParseIntPipe) page: number): Promise<ReceiptModel[]> {
         try {
@@ -38,11 +41,9 @@ export class ReceiptController {
     })
     @ApiParam({
         name: userIdParam,
-        required: false,
-        description: 'If not provided, will return all orders'
     })
     @Get(`all/:${userIdParam}`)
-    async getAllReceiptsByUser(@Query(pageQuery, ParseIntPipe) page: number, @Param(userIdParam, ParseIntPipe) userId?: number): Promise<ReceiptModel[]> {
+    async getAllReceiptsByUser(@Param(userIdParam, ParseIntPipe) userId: number, @Query(pageQuery, ParseIntPipe) page: number): Promise<ReceiptModel[]> {
         try {
             return await this.receiptService.getAllReceiptsByUser(page, userId);
         } catch (error) {

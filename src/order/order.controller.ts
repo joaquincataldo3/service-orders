@@ -28,7 +28,9 @@ export class OrderController {
 
     constructor(private orderService: OrderService) { }
 
-    
+    @ApiQuery({
+        name: pageQuery
+    })
     @Get('all')
     async allOrders(@Query(pageQuery, ParseIntPipe) page: number): Promise<OrderModel[]>{
         try {
@@ -38,6 +40,12 @@ export class OrderController {
         }
     }
 
+    @ApiQuery({
+        name: pageQuery
+    })
+    @ApiParam({
+        name: userIdParam
+    })
     @Get(`all/:${userIdParam}`)
     async allOrdersByUser(@Param(userIdParam, ParseIntPipe) userId: string, @Query(pageQuery, ParseIntPipe) page: number): Promise<OrderModel[]> {
         try {

@@ -4,6 +4,8 @@ import { ReceiptModel } from "./receipt.model";
 import { CreateReceiptDto } from "./dto/dto";
 import { ClientService } from "src/client/client.service";
 import { UserModel } from "src/user/user.model";
+import { ApiQuery } from "@nestjs/swagger";
+import { pageQuery } from "src/utils/global.constants";
 
 @Injectable({})
 
@@ -15,6 +17,9 @@ export class ReceiptService {
 
     private receiptRelations: string[] = ['createdBy', 'client', 'paymentMethod', 'guaranteeTime']
 
+    @ApiQuery({
+        name: pageQuery
+    })
     async getAllReceipts(page: number): Promise<ReceiptModel[]> {
         const limit = 5;
         const offset = limit * (page - 1);
@@ -25,13 +30,13 @@ export class ReceiptService {
         });
     }
 
-
-    async getAllReceiptsByUser(page: number, userId?: number): Promise<ReceiptModel[]> {
+    async getAllReceiptsByUser(page: number, userId: number): Promise<ReceiptModel[]> {
         const limit = 5;
         const offset = limit * (page - 1);
-        const whereClause = userId ? { user_id: userId } : {};
         return this.receiptModel.findAll({
-            where: whereClause,
+            where: {
+                created_by_id: userId
+            },
             include: this.receiptRelations,
             limit,
             offset
