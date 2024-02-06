@@ -16,8 +16,7 @@ import { clientIdParam } from "src/utils/global.constants";
 export class ClientController {
 
     constructor(private clientService: ClientService) { }
-
-
+    
     @Get('all')
     allClients() {
         try {

@@ -6,8 +6,7 @@ export class WelcomeService {
 
     getWelcomeMessage(): WelcomeMessage {
         return {
-            welcome: 'Welcome to Appointify API',
-            description: 'Go to /docs for more information',
+            welcome: 'Welcome to Service Orders API',
             ok: true
         }
     }
